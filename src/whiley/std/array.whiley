@@ -156,9 +156,9 @@ ensures all { i in 0..|r| | items[i+start] == r[i] }:
 public function append(int[] lhs, int[] rhs) -> (int[] r)
 // Resulting array exactly size of s1 and s2 together 
 ensures |r| == |lhs| + |rhs|
-// Elements of s1 are stored first in result
+// Elements of lhs are stored first in result
 ensures all { k in 0..|lhs| | r[k] == lhs[k] }
-// Elemnts of s2 are stored after those of s1
+// Elemnts of rhs are stored after those of lhs
 ensures all { k in 0..|rhs| | r[k+|lhs|] == rhs[k] }:
     int[] rs = [0; |lhs| + |rhs|]
     int i = |lhs|

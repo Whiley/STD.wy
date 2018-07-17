@@ -22,22 +22,22 @@
   <typedef uri="urn:maven-ant" classpath="lib/maven-ant-tasks-2.1.3.jar" resource="org/apache/maven/artifact/ant/antlib.xml"/>
   <!-- Set the classpath for Junit and its dependencies -->
   <maven:dependencies pathId="wyc.jar">
-    <dependency groupId="org.whiley" artifactId="wyc" version="0.5.6"/>
+    <dependency groupId="org.whiley" artifactId="wyc" version="0.5.8"/>
   </maven:dependencies>
   <maven:dependencies pathId="wyjc.jar">
-    <dependency groupId="org.whiley" artifactId="wyjc" version="0.4.6"/>
+    <dependency groupId="org.whiley" artifactId="wyjc" version="0.4.7"/>
   </maven:dependencies>
   <maven:dependencies pathId="wyjs.jar">
-    <dependency groupId="org.whiley" artifactId="wyjs" version="0.4.6"/>
+    <dependency groupId="org.whiley" artifactId="wyjs" version="0.4.7"/>
   </maven:dependencies>
   <!-- Define the WyC build task -->
   <taskdef name="wyc" classname="wyc.util.AntTask">
     <classpath>
       <path refid="wyc.jar"/>
       <!--
-	  <pathelement location="${WHILEYHOME}/lib/wyc-0.4.15.jar"/>
-	  <pathelement location="${WHILEYHOME}/lib/wycc-0.5.7.jar"/>
-	  <pathelement location="${WHILEYHOME}/lib/wytp-0.6.3.jar"/>
+      <pathelement location="${WHILEYHOME}/lib/wyc-0.5.6.jar"/>
+      <pathelement location="${WHILEYHOME}/lib/wycc-0.6.3.jar"/>
+      <pathelement location="${WHILEYHOME}/lib/wytp-0.6.12.jar"/>
       -->
     </classpath>
   </taskdef>

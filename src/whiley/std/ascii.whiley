@@ -185,7 +185,7 @@ ensures |r| == |s1| + |s2|
 // Elements of s1 are stored first in result
 ensures all { k in 0..|s1| | r[k] == s1[k] }
 // Elemnts of s2 are stored after those of s1
-ensures all { k in 0..|s2| | r[k+|s1|] == s1[k] }:
+ensures all { k in 0..|s2| | r[k+|s1|] == s2[k] }:
     string s3 = [0; |s1| + |s2|]
     int i = 0
     while i < |s3|:
