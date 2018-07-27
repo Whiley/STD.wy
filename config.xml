@@ -1,6 +1,6 @@
 <project name="BuildConfig" xmlns:maven="urn:maven-ant">
   <!-- Set the current version -->
-  <property name="version" value="0.2.3"/>
+  <property name="version" value="0.2.4"/>
   <!-- Configure various properties -->
   <property environment="env"/>
   <property name="WHILEYHOME" value="${env.WHILEYHOME}"/>
