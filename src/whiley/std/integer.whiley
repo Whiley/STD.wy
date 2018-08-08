@@ -26,6 +26,7 @@
 package std
 
 import std::ascii
+import char from std::ascii // NEEDED FOR A COMPILER BUG
 
 // THIS MODULE IS TO BE DEPRECATED
 
@@ -98,7 +99,7 @@ public type nat is (int x) where x >= 0
 // convert an integer into an unsigned byte
 public function toUnsignedByte(u8 v) -> byte:
     //
-    byte mask = 00000001b
+    byte mask = 0b00000001
     byte r = 0b
     int i = 0
     while i < 8:
@@ -122,7 +123,7 @@ public function toString(byte b) -> ascii::string:
     ascii::string r = [0; 'b']
     int i = 0
     while i < 8:
-        if (b & 00000001b) == 00000001b:
+        if (b & 0b00000001) == 0b00000001:
             r[7-i] = '1'
         else:
             r[7-i] = '0'
@@ -136,7 +137,7 @@ public function toUnsignedInt(byte b) -> u8:
     int r = 0
     int base = 1
     while b != 0b:
-        if (b & 00000001b) == 00000001b:
+        if (b & 0b00000001) == 0b00000001:
             r = r + base
         b = b >> 1
         base = base * 2
@@ -161,7 +162,7 @@ public function toInt(byte b) -> int:
     int r = 0
     int base = 1
     while b != 0b:
-        if (b & 00000001b) == 00000001b:
+        if (b & 0b00000001) == 0b00000001:
             r = r + base
         b = b >> 1
         base = base * 2

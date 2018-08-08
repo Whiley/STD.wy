@@ -150,7 +150,7 @@ public int DEL = 127
 // Convert an ASCII character into a byte.
 public function toByte(char v) -> byte:
     //
-    byte mask = 00000001b
+    byte mask = 0b00000001
     byte r = 0b
     int i = 0
     while i < 8:
