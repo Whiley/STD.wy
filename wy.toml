@@ -1,0 +1,8 @@
+[package]
+name="std"
+author="David J. Pearce"
+version="0.2.5"
+
+[build.whiley]
+source="src/whiley"
+target="bin/wyil"
