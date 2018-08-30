@@ -1,6 +1,6 @@
 [package]
 name="std"
-author="David J. Pearce"
+authors=["David J. Pearce"]
 version="0.2.5"
 
 [build.whiley]
