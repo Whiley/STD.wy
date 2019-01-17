@@ -97,7 +97,7 @@ public type nat is (int x) where x >= 0
 //     return Any.toString(item)
 
 // convert an integer into an unsigned byte
-public function toUnsignedByte(u8 v) -> byte:
+public function to_unsigned_byte(u8 v) -> byte:
     //
     byte mask = 0b00000001
     byte r = 0b
@@ -111,15 +111,15 @@ public function toUnsignedByte(u8 v) -> byte:
     return r
 
 // Convert a signed integer into a single byte
-public function toSignedByte(i8 v) -> byte:
+public function to_signed_byte(i8 v) -> byte:
     //
     if v < 0:
         v = v + 256
-    return toUnsignedByte(v)
+    return to_unsigned_byte(v)
 
 
 // convert a byte into a string
-public function toString(byte b) -> ascii::string:
+public function to_string(byte b) -> ascii::string:
     ascii::string r = [0; 'b']
     int i = 0
     while i < 8:
@@ -133,7 +133,7 @@ public function toString(byte b) -> ascii::string:
 
 // Convert a byte into an unsigned int.  This assumes a little endian
 // encoding.
-public function toUnsignedInt(byte b) -> u8:
+public function to_uint(byte b) -> u8:
     int r = 0
     int base = 1
     while b != 0b:
@@ -145,12 +145,12 @@ public function toUnsignedInt(byte b) -> u8:
 
 // Convert a byte array into an unsigned int assuming a little endian
 // form for both individual bytes, and the array as a whole
-public function toUnsignedInt(byte[] bytes) -> uint:
+public function to_uint(byte[] bytes) -> uint:
     int val = 0
     int base = 1
     int i = 0
     while i < |bytes|:
-        int v = toUnsignedInt(bytes[i]) * base
+        int v = to_uint(bytes[i]) * base
         val = val + v
         base = base * 256
         i = i + 1
@@ -158,7 +158,7 @@ public function toUnsignedInt(byte[] bytes) -> uint:
 
 // Convert a byte into an unsigned int.  This assumes a little endian
 // encoding.
-public function toInt(byte b) -> int:
+public function to_int(byte b) -> int:
     int r = 0
     int base = 1
     while b != 0b:
@@ -174,12 +174,12 @@ public function toInt(byte b) -> int:
 
 // Convert a byte array into a signed int assuming a little endian
 // form for both individual bytes, and the array as a whole
-public function toInt(byte[] bytes) -> int:
+public function to_int(byte[] bytes) -> int:
     int val = 0
     int base = 1
     int i = 0
     while i < |bytes|:
-        int v = toUnsignedInt(bytes[i]) * base
+        int v = to_uint(bytes[i]) * base
         val = val + v
         base = base * 256
         i = i + 1
