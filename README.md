@@ -1,4 +1,4 @@
-# Whiley Standard Library (WySTD)
+# Whiley Standard Library (STD.wy)
 
 This is the Whiley Standard Library which provides a supported set of
 primitives for writing programs and interacting with the world.  The
