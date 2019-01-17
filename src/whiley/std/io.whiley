@@ -62,7 +62,7 @@ public type Reader is {
 
     // Check whether the end-of-stream has been reached and, hence,
     // that there are no further bytes which can be read.
-    method hasMore() -> bool,
+    method has_more() -> bool,
 
     // Closes this input stream thereby releasin any resources
     // associated with it.

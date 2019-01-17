@@ -1,7 +1,7 @@
 [package]
 name="std"
 authors=["David J. Pearce"]
-version="0.2.5"
+version="0.2.6"
 
 [build.whiley]
 source="src/whiley"

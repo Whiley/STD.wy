@@ -148,7 +148,7 @@ public int US = 31
 public int DEL = 127
 
 // Convert an ASCII character into a byte.
-public function toByte(char v) -> byte:
+public function to_byte(char v) -> byte:
     //
     byte mask = 0b00000001
     byte r = 0b
@@ -162,20 +162,20 @@ public function toByte(char v) -> byte:
     return r
 
 // Convert an ASCII string into a list of bytes
-public function toBytes(string s) -> byte[]:
+public function to_bytes(string s) -> byte[]:
     byte[] r = [0b; |s|]
     int i = 0
     while i < |s| where i >= 0:
-        r[i] = toByte(s[i])
+        r[i] = to_byte(s[i])
         i = i + 1
     return r
 
 // Convert a list of bytes into an ASCII string
-public function fromBytes(byte[] data) -> string:
+public function from_bytes(byte[] data) -> string:
     string r = [0; |data|]
     int i = 0
     while i < |data| where i >= 0:
-        r[i] = integer::toInt(data[i])
+        r[i] = integer::to_int(data[i])
         i = i + 1
     return r
 
@@ -196,22 +196,22 @@ ensures all { k in 0..|s2| | r[k+|s1|] == s2[k] }:
        i = i + 1
     return s3
 
-public function isUpperCase(char c) -> bool:
+public function is_upper_case(char c) -> bool:
     return 'A' <= c && c <= 'Z'
 
-public function isLowerCase(char c) -> bool:
+public function is_lower_case(char c) -> bool:
     return 'a' <= c && c <= 'z'
 
-public function isLetter(char c) -> bool:
+public function is_letter(char c) -> bool:
     return ('a' <= c && c <= 'z') || ('A' <= c && c <= 'Z')
 
-public function isDigit(char c) -> bool:
+public function is_digit(char c) -> bool:
     return '0' <= c && c <= '9'
 
-public function isWhiteSpace(char c) -> bool:
+public function is_whitespace(char c) -> bool:
     return c == ' ' || c == '\t' || c == '\n' || c == '\r'
 
-public function toString(int item) -> string:
+public function to_string(int item) -> string:
     //
     bool sign
     // First, normalise item and record sign
@@ -273,7 +273,7 @@ public function toHexString(int item) -> string:
 */
 
 // parse a string representation of an integer value
-public function parseInt(ascii::string input) -> int|null:
+public function parse_int(ascii::string input) -> int|null:
     //
     // first, check for negative number
     int start = 0
@@ -290,7 +290,7 @@ public function parseInt(ascii::string input) -> int|null:
     while i < |input|:
         char c = input[i]
         r = r * 10
-        if !ascii::isDigit(c):
+        if !ascii::is_digit(c):
             return null
         r = r + ((int) c - '0')
         i = i + 1

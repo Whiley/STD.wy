@@ -34,7 +34,7 @@ type uint is (int x) where x >= 0
 
 public type File is  {
     // Read all bytes of this file in one go.
-    method readAll() -> byte[],
+    method read_all() -> byte[],
 
     // Reads at most a given number of bytes from the file.  This
     // operation may block if the number requested is greater than that
@@ -50,7 +50,7 @@ public type File is  {
 
     // Check whether the end-of-stream has been reached and, hence,
     // that there are no further bytes which can be read.
-    method hasMore() -> bool,
+    method has_more() -> bool,
 
     // Closes this file reader thereby releasin any resources
     // associated with it.

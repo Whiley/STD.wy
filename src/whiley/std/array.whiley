@@ -52,7 +52,7 @@ ensures all { i in |items| .. size | result[i] == element}:
 
 // find first index in list which matches character.  If no match,
 // then return null.
-public function indexOf(int[] items, int item) -> (int|null index)
+public function first_index_of(int[] items, int item) -> (int|null index)
 // If int returned, element at this position matches item
 ensures index is int ==> items[index] == item
 // If int returned, element at this position is first match
@@ -60,11 +60,11 @@ ensures index is int ==> all { i in 0 .. index | items[i] != item }
 // If null returned, no element in items matches item
 ensures index is null ==> all { i in 0 .. |items| | items[i] != item }:
     //
-    return indexOf(items,item,0)
+    return first_index_of(items,item,0)
 
 // find first index after a given start point in list which matches character.
 // If no match, then return null.
-public function indexOf(int[] items, int item, int start) -> (int|null index)
+public function first_index_of(int[] items, int item, int start) -> (int|null index)
 // Starting point cannot be negative
 requires start >= 0
 // If int returned, element at this position matches item
@@ -90,7 +90,7 @@ ensures index is null ==> all { i in start .. |items| | items[i] != item }:
 
 // find last index in list which matches character.  If no match,
 // then return null.
-public function lastIndexOf(int[] items, int item) -> (int|null index)
+public function last_index_of(int[] items, int item) -> (int|null index)
 // If int returned, element at this position matches item
 ensures index is int ==> items[index] == item
 // If int returned, element at this position is last match
