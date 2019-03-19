@@ -28,24 +28,24 @@ package std
 // ===========================================================================
 // Stack
 // ===========================================================================
-public type Stack is {
-    int[] items,
+public type Stack<T> is {
+    T[] items,
     int length
 }
 
-public function Stack(int max) -> Stack:
+public function Stack<T>(int max, T item) -> Stack<T>:
     return {
-        items: [0; max],
+        items: [item; max],
         length: 0
     }
 
-public function size(Stack stack) -> int:
+public function size<T>(Stack<T> stack) -> int:
     return stack.length
 
 /**
  * Return the top element of the "stack".
  */
-public function top(Stack stack) -> int:
+public function top<T>(Stack<T> stack) -> T:
     //
     return stack.items[stack.length-1]
 
@@ -53,7 +53,7 @@ public function top(Stack stack) -> int:
 /**
  * Push an element onto the "stack".
  */
-public function push(Stack stack, int element) -> (Stack r):
+public function push<T>(Stack<T> stack, T element) -> (Stack<T> r):
     //
     stack.items[stack.length] = element
     stack.length = stack.length + 1
@@ -62,7 +62,7 @@ public function push(Stack stack, int element) -> (Stack r):
 /**
  * Pop an element off the "stack".
  */
-public function pop(Stack stack) -> (Stack r):
+public function pop<T>(Stack<T> stack) -> (Stack<T> r):
     //
     stack.length = stack.length - 1
     //
