@@ -25,6 +25,8 @@
 
 package std
 
+import std::array
+
 // ===========================================================================
 // Stack
 // ===========================================================================
@@ -67,3 +69,60 @@ public function pop<T>(Stack<T> stack) -> (Stack<T> r):
     stack.length = stack.length - 1
     //
     return stack
+
+// ===========================================================================
+// Vector
+// ===========================================================================
+
+public type Vector<T> is {
+    T[] items,
+    int length
+} where length <= |items|
+
+// Construct empty vector
+public function Vector<T>() -> Vector<T>:
+    return {
+        items: [],
+        length: 0
+    }
+
+// Construct initialised vector
+public function Vector<T>(T[] items) -> Vector<T>:
+    return {
+        items: items,
+        length: |items|
+    }
+
+public function length<T>(Vector<T> vec) -> (int r)
+ensures r == vec.length:
+    return vec.length
+
+public function add<T>(Vector<T> vec, T item) -> Vector<T>:
+    //
+    if vec.length == |vec.items|:
+        // vec is full so must resize
+        int nlen = (vec.length*2)+1
+        // double size of internal array
+        vec.items = array::resize<T>(vec.items,nlen,item)
+    else:
+        vec.items[vec.length] = item
+    //
+    vec.length = vec.length + 1        
+    //
+    return vec
+
+public function set<T>(Vector<T> vec, int index, T item) -> (Vector<T> result)
+// Index must be within array bounds
+requires index >= 0 && index < |vec.items|:
+    // update element in question
+    vec.items[index] = item
+    // done
+    return vec
+
+public function get<T>(Vector<T> vec, int index) -> (T item)
+// Index must be within array bounds 
+requires index >= 0 && index < vec.length
+// Must return actual item from vector
+ensures item == vec.items[index]:
+    //
+    return vec.items[index]

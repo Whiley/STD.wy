@@ -135,7 +135,7 @@ ensures all { k in 0..|rhs| | r[k+|lhs|] == rhs[k] }:
         return rhs
     else:
         // resize array
-        T[] rs = resize(lhs, |lhs| + |rhs|, lhs[0])
+        T[] rs = resize<T>(lhs, |lhs| + |rhs|, lhs[0])
         // copy over new items
         return copy(rhs,0,rs,|lhs|,|rhs|)
 
