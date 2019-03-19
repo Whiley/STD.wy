@@ -25,31 +25,6 @@
 
 package std
 
-// Resize an array to a given size
-public function resize<T>(T[] items, int size, T element) -> (T[] result)
-// Required size cannot be negative
-requires size >= 0
-// Returned array is of specified size
-ensures |result| == size
-// If array is enlarged, the all elements up to new size match
-ensures all { i in 0 .. |items| | i >= size || result[i] == items[i] }
-// All new elements match given element
-ensures all { i in |items| .. size | result[i] == element}:
-    //
-    T[] nitems = [element; size]
-    int i = 0
-    while i < size && i < |items|
-    where i >= 0 && |nitems| == size
-    // All elements up to i match as before
-    where all { j in 0..i | nitems[j] == items[j] }
-    // All elements about size match element
-    where all { j in |items| .. size | nitems[j] == element}:
-        //
-        nitems[i] = items[i]
-        i = i + 1
-    //
-    return nitems
-
 // find first index in list which matches character.  If no match,
 // then return null.
 public function first_index_of<T>(T[] items, T item) -> (int|null index)
@@ -134,7 +109,7 @@ ensures |items| == |r|:
     return items
 
 // Extract slice of items array between start and up to (but not including) end.
-public function slice(int[] items, int start, int end) -> (int[] r)
+public function slice<T>(T[] items, int start, int end) -> (T[] r)
 // Given region to slice must make sense
 requires start >= 0 && start <= end && end <= |items|
 // Size of slice determined by difference between start and end
@@ -142,36 +117,27 @@ ensures |r| == (end - start)
 // Items returned in slice match those in region from start
 ensures all { i in 0..|r| | items[i+start] == r[i] }:
     //
-    int[] nitems = [0; end-start]
-    int i = 0
-    //
-    while i < |nitems|
-    where i >= 0 && |nitems| == (end-start)
-    where all { k in 0..i | nitems[k] == items[k+start] }:
-        nitems[i] = items[i+start]
-        i = i + 1
-    //
-    return nitems
+    if start == end:
+        return []
+    else:    
+        T[] nitems = [items[0]; end-start]
+        return copy(items,start,nitems,0,|nitems|)
 
-public function append(int[] lhs, int[] rhs) -> (int[] r)
+public function append<T>(T[] lhs, T[] rhs) -> (T[] r)
 // Resulting array exactly size of s1 and s2 together 
 ensures |r| == |lhs| + |rhs|
 // Elements of lhs are stored first in result
 ensures all { k in 0..|lhs| | r[k] == lhs[k] }
 // Elemnts of rhs are stored after those of lhs
 ensures all { k in 0..|rhs| | r[k+|lhs|] == rhs[k] }:
-    int[] rs = [0; |lhs| + |rhs|]
-    int i = |lhs|
     //
-    while i > 0:
-        i = i - 1
-        rs[i] = lhs[i]
-    //
-    while i < |rhs|:
-        rs[i+|lhs|] = rhs[i]
-        i = i + 1
-    //
-    return rs
+    if |lhs| == 0:
+        return rhs
+    else:
+        // resize array
+        T[] rs = resize(lhs, |lhs| + |rhs|, lhs[0])
+        // copy over new items
+        return copy(rhs,0,rs,|lhs|,|rhs|)
 
 public function append<T>(T[] items, T item) -> (T[] r)
 // Every item from original array is retained
@@ -208,6 +174,53 @@ ensures |r| == |items|+1:
     where all { k in 0..i | nitems[k+1] == items[k] }:
         nitems[i+1] = items[i]
         i = i + 1 
+    //
+    return nitems
+
+public function resize<T>(T[] src, int size) -> (T[] result)
+// Cannot create an array of negative size
+requires size >= 0 && size <= |src|
+// Resulting array must have desired size
+ensures |result| == size
+// All elements must be copied over if increasing in size
+ensures all { k in 0..size | result[k] == src[k] }:
+    //    
+    if |src| == 0:
+        // handle empty array case
+        return src
+    else:
+        result = [src[0]; size]
+        int i = 0
+        // copy what we can over
+        while i < size:
+            result[i] = src[i]
+            i = i + 1
+        //
+        return result
+
+public function resize<T>(T[] items, int size, T item) -> (T[] result)
+// Required size cannot be negative
+requires size >= 0
+// Resulting array must have desired size
+ensures |result| == size
+// All elements must be copied over if increasing in size
+ensures (|items| <= size) ==> all { k in 0..|items| | result[k] == items[k] }
+// Must fill upper part of result with default item
+ensures (|items| <= size) ==> all { k in |items|..size | result[k] == item }
+// As many elements as possible must be copied if decreasing in size
+ensures (|items| > size) ==> all { k in 0..size | result[k] == items[k] }:
+    //
+    T[] nitems = [item; size]    
+    int i = 0
+    // copy first part
+    while i < size && i < |items|
+    where i >= 0 && |nitems| == size
+    // All elements up to i match as before
+    where all { j in 0..i | nitems[j] == items[j] }
+    // All elements about size match item
+    where all { j in |items| .. size | nitems[j] == item}:
+        nitems[i] = items[i]
+        i = i + 1
     //
     return nitems
 

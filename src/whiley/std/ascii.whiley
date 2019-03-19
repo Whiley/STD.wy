@@ -26,6 +26,7 @@
 package std
 
 import std::integer
+import std::array
 
 // The ASCII standard (INCITS 4-1986[R2012]) defines a 7bit character
 // encoding.
@@ -179,23 +180,6 @@ public function from_bytes(byte[] data) -> string:
         i = i + 1
     return r
 
-public function append(string s1, string s2) -> (string r)
-// Resulting array exactly size of s1 and s2 together 
-ensures |r| == |s1| + |s2|
-// Elements of s1 are stored first in result
-ensures all { k in 0..|s1| | r[k] == s1[k] }
-// Elemnts of s2 are stored after those of s1
-ensures all { k in 0..|s2| | r[k+|s1|] == s2[k] }:
-    string s3 = [0; |s1| + |s2|]
-    int i = 0
-    while i < |s3|:
-       if i < |s1|:
-          s3[i] = s1[i]
-       else:
-          s3[i] = s2[i-|s1|]
-       i = i + 1
-    return s3
-
 public function is_upper_case(char c) -> bool:
     return 'A' <= c && c <= 'Z'
 
@@ -242,7 +226,7 @@ public function to_string(int item) -> string:
         return r
     else:
         // This could be optimised!
-        return append("-",r)
+        return array::append("-",r)
 
 /*
 constant digits is [
