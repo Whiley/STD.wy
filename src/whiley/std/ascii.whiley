@@ -25,8 +25,12 @@
 
 package std
 
-// Define the 8bit ASCII character
-public type char is (int x) where 0 <= x && x <= 255
+import std::integer
+import std::array
+
+// The ASCII standard (INCITS 4-1986[R2012]) defines a 7bit character
+// encoding.
+public type char is (int x) where 0 <= x && x <= 127
 
 // Define the ASCII letter
 public type letter is (int x) where ('a' <= x && x <= 'z') || ('A' <= x && x <= 'Z')
@@ -43,10 +47,111 @@ public type digit is (int x) where ('0' <= x && x <= '9')
 // Define string as sequence of ASCII characters
 public type string is char[]
 
+// === CONTROL CHARACTERS ===
+
+// Null character
+public int NUL = 0
+
+// Start of Header
+public int SOH = 1
+
+// Start of Text
+public int STX = 2
+
+// End of Text
+public int ETX = 3
+
+// End of Transmission
+public int EOT = 4
+
+// Enquiry
+public int ENQ = 5
+
+// Acknowledgment
+public int ACK = 6
+
+// Bell
+public int BEL = 7
+
+// Backspace
+public int BS = 8
+
+// Horizontal Tab
+public int HT = 9
+
+// Line Feed
+public int LF = 10
+
+// Vertical Tab
+public int VT = 11
+
+// Form Feed
+public int FF = 12
+
+// Carriage Return
+public int CR = 13
+
+// Shift Out
+public int SO = 14
+
+// Shift In
+public int SI = 15
+
+// Data Link Escape
+public int DLE = 16
+
+// Device Control 1
+public int DC1 = 17
+
+// Device Control 2
+public int DC2 = 18
+
+// Device Control 3
+public int DC3 = 19
+
+// Device Control 4
+public int DC4 = 20
+
+// Negative Acknowledgement
+public int NAK = 21
+
+// Synchronous Idle
+public int SYN = 22
+
+// End of Transmission Block
+public int ETB = 23
+
+// Cancel
+public int CAN = 24
+
+// End of Medium
+public int EM = 25
+
+// Substitute
+public int SUB = 26
+
+// Escape
+public int ESC = 27
+
+// File Separator
+public int FS = 28
+
+// Group Separator
+public int GS = 29
+
+// Record Separator
+public int RS = 30
+
+// Unit Separator
+public int US = 31
+
+// Delete
+public int DEL = 127
+
 // Convert an ASCII character into a byte.
-public function toByte(char v) -> byte:
+public function to_byte(char v) -> byte:
     //
-    byte mask = 00000001b
+    byte mask = 0b00000001
     byte r = 0b
     int i = 0
     while i < 8:
@@ -58,48 +163,71 @@ public function toByte(char v) -> byte:
     return r
 
 // Convert an ASCII string into a list of bytes
-public function toBytes(string s) -> byte[]:
+public function to_bytes(string s) -> byte[]:
     byte[] r = [0b; |s|]
     int i = 0
     while i < |s| where i >= 0:
-        r[i] = toByte(s[i])
+        r[i] = to_byte(s[i])
         i = i + 1
     return r
 
 // Convert a list of bytes into an ASCII string
-public function fromBytes(byte[] data) -> string:
+public function from_bytes(byte[] data) -> string:
     string r = [0; |data|]
     int i = 0
     while i < |data| where i >= 0:
-        r[i] = integer.toInt(data[i])
+        r[i] = integer::to_int(data[i])
         i = i + 1
     return r
 
-public function append(string s1, string s2) -> string:
-    string s3 = [0; |s1| + |s2|]
-    int i = 0
-    while i < |s3|:
-       if i < |s1|:
-          s3[i] = s1[i]
-       else:
-          s3[i] = s2[i-|s1|]
-       i = i + 1
-    return s3
-
-public function isUpperCase(char c) -> bool:
+public function is_upper_case(char c) -> bool:
     return 'A' <= c && c <= 'Z'
 
-public function isLowerCase(char c) -> bool:
+public function is_lower_case(char c) -> bool:
     return 'a' <= c && c <= 'z'
 
-public function isLetter(char c) -> bool:
+public function is_letter(char c) -> bool:
     return ('a' <= c && c <= 'z') || ('A' <= c && c <= 'Z')
 
-public function isDigit(char c) -> bool:
+public function is_digit(char c) -> bool:
     return '0' <= c && c <= '9'
 
-public function isWhiteSpace(char c) -> bool:
+public function is_whitespace(char c) -> bool:
     return c == ' ' || c == '\t' || c == '\n' || c == '\r'
+
+public function to_string(int item) -> string:
+    //
+    bool sign
+    // First, normalise item and record sign
+    if item < 0:
+       sign = false
+       item = -item
+    else:
+       sign = true
+    // Second, determine number of digits.  This is necessary to
+    // avoid unnecessary dynamic memory allocatione    
+    int tmp = item
+    int digits = 0
+    do:
+        tmp = tmp / 10
+        digits = digits + 1
+    while tmp != 0
+    // Finally write digits into resulting string
+    string r = ['0';digits]
+    do:
+        int remainder = item % 10
+        item = item / 10
+        char digit = ('0' + remainder)
+        digits = digits - 1
+        r[digits] = digit
+    while item != 0
+    //
+    if sign:
+        return r
+    else:
+        // This could be optimised!
+        return array::append("-",r)
+
 /*
 constant digits is [
     '0','1','2','3','4','5','6','7','8','9',
@@ -129,7 +257,7 @@ public function toHexString(int item) -> string:
 */
 
 // parse a string representation of an integer value
-public function parseInt(ascii.string input) -> int|null:
+public function parse_int(ascii::string input) -> int|null:
     //
     // first, check for negative number
     int start = 0
@@ -146,7 +274,7 @@ public function parseInt(ascii.string input) -> int|null:
     while i < |input|:
         char c = input[i]
         r = r * 10
-        if !ascii.isDigit(c):
+        if !ascii::is_digit(c):
             return null
         r = r + ((int) c - '0')
         i = i + 1

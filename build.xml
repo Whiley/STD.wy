@@ -54,7 +54,7 @@
   <!-- Build -->
   <!-- ================================================================== -->
 
-  <target name="build" depends="compile-jvm,compile-js">
+  <target name="build" depends="compile-wyil">
     <jar destfile="${LIB_DIR}/wystd-v${version}.jar">
       <fileset dir="${WYIL_DIR}" includes="*/**/*.wyil"/>
       <fileset dir="${WYAL_DIR}" includes="*/**/*.wyal"/>

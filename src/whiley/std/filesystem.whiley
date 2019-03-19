@@ -24,7 +24,7 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package std
 
-import string from std.ascii
+import std::ascii
 
 type uint is (int x) where x >= 0
 
@@ -34,7 +34,7 @@ type uint is (int x) where x >= 0
 
 public type File is  {
     // Read all bytes of this file in one go.
-    method readAll() -> byte[],
+    method read_all() -> byte[],
 
     // Reads at most a given number of bytes from the file.  This
     // operation may block if the number requested is greater than that
@@ -50,7 +50,7 @@ public type File is  {
 
     // Check whether the end-of-stream has been reached and, hence,
     // that there are no further bytes which can be read.
-    method hasMore() -> bool,
+    method has_more() -> bool,
 
     // Closes this file reader thereby releasin any resources
     // associated with it.
@@ -61,5 +61,10 @@ public type File is  {
     method available() -> uint
 }
 
+public int READONLY = 0
+public int READWRITE = 1
+
+public type rwMode is (int x) where (x == READONLY) || (x == READWRITE)
+
 // Create a file object for reading / writing
-public native method open(ascii.string fileName) -> File
+public native method open(ascii::string fileName, rwMode mode) -> File

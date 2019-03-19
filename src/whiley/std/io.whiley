@@ -25,6 +25,8 @@
 
 package std
 
+import std::ascii
+
 // TO BE DEPRECATED
 type uint is (int x) where x >= 0
 
@@ -36,13 +38,13 @@ type uint is (int x) where x >= 0
 public native method print(int value)
 
 // Print an ASCII string to stdout
-public native method print(ascii.string value)
+public native method print(ascii::string value)
 
 // Print an integer to stdout (with newline terminator)
 public native method println(int value)
 
 // Print an ASCII string to stdout (with newline terminator)
-public native method println(ascii.string value)
+public native method println(ascii::string value)
 
 // =================================================================
 // Stream Reader
@@ -60,7 +62,7 @@ public type Reader is {
 
     // Check whether the end-of-stream has been reached and, hence,
     // that there are no further bytes which can be read.
-    method hasMore() -> bool,
+    method has_more() -> bool,
 
     // Closes this input stream thereby releasin any resources
     // associated with it.
