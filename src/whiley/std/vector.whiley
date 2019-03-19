@@ -27,57 +27,14 @@ package std
 
 import std::array
 
-// ===========================================================================
-// Stack
-// ===========================================================================
-public type Stack<T> is {
-    T[] items,
-    int length
-}
-
-public function Stack<T>(int max, T item) -> Stack<T>:
-    return {
-        items: [item; max],
-        length: 0
-    }
-
-public function size<T>(Stack<T> stack) -> int:
-    return stack.length
-
-/**
- * Return the top element of the "stack".
- */
-public function top<T>(Stack<T> stack) -> T:
-    //
-    return stack.items[stack.length-1]
-
-
-/**
- * Push an element onto the "stack".
- */
-public function push<T>(Stack<T> stack, T element) -> (Stack<T> r):
-    //
-    stack.items[stack.length] = element
-    stack.length = stack.length + 1
-    return stack
-
-/**
- * Pop an element off the "stack".
- */
-public function pop<T>(Stack<T> stack) -> (Stack<T> r):
-    //
-    stack.length = stack.length - 1
-    //
-    return stack
-
-// ===========================================================================
-// Vector
-// ===========================================================================
-
 public type Vector<T> is {
     T[] items,
     int length
 } where length <= |items|
+
+// =====================================================
+// Constructors
+// =====================================================
 
 // Construct empty vector
 public function Vector<T>() -> Vector<T>:
@@ -93,11 +50,42 @@ public function Vector<T>(T[] items) -> Vector<T>:
         length: |items|
     }
 
-public function length<T>(Vector<T> vec) -> (int r)
+// =====================================================
+// Accessors
+// =====================================================
+
+/**
+ * Return the top element of vector
+ */
+public function top<T>(Vector<T> vec) -> T
+// Cannot query top of empty vector
+requires vec.length > 0:
+    //
+    return vec.items[vec.length-1]
+
+/**
+ * Return number of elements in vector
+ */ 
+public function size<T>(Vector<T> vec) -> (int r)
 ensures r == vec.length:
     return vec.length
 
-public function add<T>(Vector<T> vec, T item) -> Vector<T>:
+/**
+ * Get ith element of vector
+ */
+public function get<T>(Vector<T> vec, int ith) -> (T item)
+// Index must be within array bounds 
+requires ith >= 0 && ith < vec.length
+// Must return actual item from vector
+ensures item == vec.items[ith]:
+    //
+    return vec.items[ith]
+    
+// =====================================================
+// Mutators
+// =====================================================
+
+public function push<T>(Vector<T> vec, T item) -> Vector<T>:
     //
     if vec.length == |vec.items|:
         // vec is full so must resize
@@ -111,18 +99,35 @@ public function add<T>(Vector<T> vec, T item) -> Vector<T>:
     //
     return vec
 
-public function set<T>(Vector<T> vec, int index, T item) -> (Vector<T> result)
+/**
+ * Pop an element off the "stack".
+ */
+public function pop<T>(Vector<T> vec) -> (Vector<T> r)
+// Cannot pop item of empty vector
+requires vec.length > 0:
+    //
+    vec.length = vec.length - 1
+    //
+    return vec
+
+/**
+ * Set ith element of vector
+ */
+public function set<T>(Vector<T> vec, int ith, T item) -> (Vector<T> result)
 // Index must be within array bounds
-requires index >= 0 && index < |vec.items|:
+requires ith >= 0 && ith < |vec.items|:
     // update element in question
-    vec.items[index] = item
+    vec.items[ith] = item
     // done
     return vec
 
-public function get<T>(Vector<T> vec, int index) -> (T item)
-// Index must be within array bounds 
-requires index >= 0 && index < vec.length
-// Must return actual item from vector
-ensures item == vec.items[index]:
-    //
-    return vec.items[index]
+/**
+ * Clear the vector, removing all elements
+ */
+public function clear<T>(Vector<T> vec) -> (Vector<T> r)
+// Must return empty vector
+ensures r.length == 0:
+    // reset internal length
+    vec.length = 0
+    // done
+    return vec
