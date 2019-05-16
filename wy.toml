@@ -1,10 +1,16 @@
 [package]
 name="std"
 authors=["David J. Pearce"]
-version="0.2.9"
+version="0.2.10"
 
 [build]
 platforms=["whiley"]
+
+[check]
+min=-2
+max=2
+length=3
+depth=1
 
 [build.whiley]
 source="src/whiley"

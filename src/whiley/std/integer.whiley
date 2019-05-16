@@ -139,7 +139,9 @@ public function to_uint(byte b) -> u8:
     while b != 0b:
         if (b & 0b00000001) == 0b00000001:
             r = r + base
-        b = b >> 1
+        // NOTE: following mask needed in leu of unsigned right shift
+        // operator.
+        b = (b >> 1) & 0b01111111
         base = base * 2
     return r
 
@@ -164,7 +166,9 @@ public function to_int(byte b) -> int:
     while b != 0b:
         if (b & 0b00000001) == 0b00000001:
             r = r + base
-        b = b >> 1
+        // NOTE: following mask needed in leu of unsigned right shift
+        // operator.
+        b = (b >> 1) & 0b01111111
         base = base * 2
     // finally, add the sign
     if r >= 128:
