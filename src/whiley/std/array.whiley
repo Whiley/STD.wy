@@ -25,6 +25,8 @@
 
 package std
 
+import uint from std::integer
+
 // find first index in list which matches character.  If no match,
 // then return null.
 public function first_index_of<T>(T[] items, T item) -> (int|null index)
@@ -41,7 +43,7 @@ ensures index is null ==> all { i in 0 .. |items| | items[i] != item }:
 // If no match, then return null.
 public function first_index_of<T>(T[] items, T item, int start) -> (int|null index)
 // Starting point cannot be negative
-requires start >= 0
+requires start >= 0 && start <= |items|
 // If int returned, element at this position matches item
 ensures index is int ==> items[index] == item
 // If int returned, element at this position is first match
@@ -217,14 +219,14 @@ ensures (|items| > size) ==> all { k in 0..size | result[k] == items[k] }:
     where i >= 0 && |nitems| == size
     // All elements up to i match as before
     where all { j in 0..i | nitems[j] == items[j] }
-    // All elements about size match item
-    where all { j in |items| .. size | nitems[j] == item}:
+    // All elements above size match item
+    where size >= |items| ==> all { j in |items| .. size | nitems[j] == item}:
         nitems[i] = items[i]
         i = i + 1
     //
     return nitems
 
-public function copy<T>(T[] src, int srcStart, T[] dest, int destStart, int length) -> (T[] result)
+public function copy<T>(T[] src, uint srcStart, T[] dest, uint destStart, uint length) -> (T[] result)
 // Source array must contain enough elements to be copied
 requires (srcStart + length) <= |src|
 // Destination array must have enough space for copied elements
@@ -234,7 +236,7 @@ ensures |result| == |dest|
 // All elements before copied region are same
 ensures all { i in 0 .. destStart | dest[i] == result[i] }
 // All elements in copied region match src
-ensures all { i in 0 .. length | dest[i+destStart] == src[i+srcStart] }
+ensures all { i in 0 .. length | src[i+srcStart] == result[i+destStart] }
 // All elements above copied region are same
 ensures all { i in (destStart+length) .. |dest| | dest[i] == result[i] }:
     //

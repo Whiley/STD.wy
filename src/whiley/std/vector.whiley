@@ -26,10 +26,11 @@
 package std
 
 import std::array
+import uint from std::integer
 
 public type Vector<T> is {
     T[] items,
-    int length
+    uint length
 } where length <= |items|
 
 // =====================================================

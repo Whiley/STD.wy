@@ -113,9 +113,12 @@ public function to_unsigned_byte(u8 v) -> byte:
 // Convert a signed integer into a single byte
 public function to_signed_byte(i8 v) -> byte:
     //
-    if v < 0:
-        v = v + 256
-    return to_unsigned_byte(v)
+    u8 u
+    if v >= 0:
+        u = v
+    else:
+        u = v + 256
+    return to_unsigned_byte(u)
 
 
 // convert a byte into a string

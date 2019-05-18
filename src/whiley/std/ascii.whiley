@@ -27,6 +27,7 @@ package std
 
 import std::integer
 import std::array
+import uint from std::integer
 
 // The ASCII standard (INCITS 4-1986[R2012]) defines a 7bit character
 // encoding.
@@ -176,7 +177,10 @@ public function from_bytes(byte[] data) -> string:
     string r = [0; |data|]
     int i = 0
     while i < |data| where i >= 0:
-        r[i] = integer::to_int(data[i])
+        uint v = integer::to_uint(data[i])
+        if v >= 127:
+            v = '?'
+        r[i] = v
         i = i + 1
     return r
 
@@ -257,7 +261,8 @@ public function toHexString(int item) -> string:
 */
 
 // parse a string representation of an integer value
-public function parse_int(ascii::string input) -> int|null:
+public function parse_int(ascii::string input) -> int|null
+requires |input| > 0:
     //
     // first, check for negative number
     int start = 0
