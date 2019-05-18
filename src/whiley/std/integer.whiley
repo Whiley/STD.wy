@@ -113,9 +113,12 @@ public function to_unsigned_byte(u8 v) -> byte:
 // Convert a signed integer into a single byte
 public function to_signed_byte(i8 v) -> byte:
     //
-    if v < 0:
-        v = v + 256
-    return to_unsigned_byte(v)
+    u8 u
+    if v >= 0:
+        u = v
+    else:
+        u = v + 256
+    return to_unsigned_byte(u)
 
 
 // convert a byte into a string
@@ -139,7 +142,9 @@ public function to_uint(byte b) -> u8:
     while b != 0b:
         if (b & 0b00000001) == 0b00000001:
             r = r + base
-        b = b >> 1
+        // NOTE: following mask needed in leu of unsigned right shift
+        // operator.
+        b = (b >> 1) & 0b01111111
         base = base * 2
     return r
 
@@ -164,7 +169,9 @@ public function to_int(byte b) -> int:
     while b != 0b:
         if (b & 0b00000001) == 0b00000001:
             r = r + base
-        b = b >> 1
+        // NOTE: following mask needed in leu of unsigned right shift
+        // operator.
+        b = (b >> 1) & 0b01111111
         base = base * 2
     // finally, add the sign
     if r >= 128:
