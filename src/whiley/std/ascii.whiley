@@ -232,6 +232,21 @@ public function to_string(int item) -> string:
         // This could be optimised!
         return array::append("-",r)
 
+/**
+ * Convert an array of integers into an ASCII String.
+ */
+public function to_string(int[] items) -> string:
+    string r = ""
+    uint i = 0
+    // Convert each item in array to string
+    while i < |items|:
+        if i != 0:
+            r = array::append(r,",")
+        r = array::append(r,to_string(items[i]))
+        i = i + 1
+    // Done
+    return r    
+
 /*
 constant digits is [
     '0','1','2','3','4','5','6','7','8','9',

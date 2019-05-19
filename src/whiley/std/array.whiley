@@ -250,4 +250,3 @@ ensures all { i in (destStart+length) .. |dest| | dest[i] == result[i] }:
         j = j + 1
     //
     return dest
-

@@ -26,7 +26,7 @@ package std
 
 import std::ascii
 
-type uint is (int x) where x >= 0
+public type uint is (int x) where x >= 0
 
 // ====================================================
 // File 
