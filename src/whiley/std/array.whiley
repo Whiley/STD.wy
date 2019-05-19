@@ -250,3 +250,10 @@ ensures all { i in (destStart+length) .. |dest| | dest[i] == result[i] }:
         j = j + 1
     //
     return dest
+
+// Check if two arrays equal for a given subrange
+public property equals<T>(T[] lhs, T[] rhs, int start, int end)
+// Arrays must be big enough to hold subrange
+where |lhs| >= end && |rhs| >= end
+// All items in subrange match
+where all { i in start..end | lhs[i] == rhs[i] }
