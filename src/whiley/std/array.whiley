@@ -27,6 +27,30 @@ package std
 
 import uint from std::integer
 
+// ===================================================================
+// Properties
+// ===================================================================
+
+// Check if two arrays equal for a given subrange
+public property equals<T>(T[] lhs, T[] rhs, int start, int end)
+// Arrays must be big enough to hold subrange
+where |lhs| >= end && |rhs| >= end
+// All items in subrange match
+where all { i in start..end | lhs[i] == rhs[i] }
+
+public property contains<T>(T[] lhs, T item, int start, int end)
+// Some index in given range contains item
+where some { i in start..end | lhs[i] == item }
+
+// Ensure all elements in an array (upto a given point) are unique
+property unique_elements<T>(T[] items, int end)
+// All items upto end are unique
+where all { i in 0..end, j in (i+1)..end | items[i] != items[j] }
+
+// ===================================================================
+// Queries
+// ===================================================================
+
 // find first index in list which matches character.  If no match,
 // then return null.
 public function first_index_of<T>(T[] items, T item) -> (int|null index)
@@ -87,6 +111,10 @@ ensures index is null ==> all { i in 0 .. |items| | items[i] != item }:
             return i
     //
     return null
+
+// ===================================================================
+// Mutators
+// ===================================================================
 
 // replace all occurrences of "old" with "new" in list "items".
 public function replace<T>(T[] items, T old, T n) -> (T[] r)
@@ -250,10 +278,3 @@ ensures all { i in (destStart+length) .. |dest| | dest[i] == result[i] }:
         j = j + 1
     //
     return dest
-
-// Check if two arrays equal for a given subrange
-public property equals<T>(T[] lhs, T[] rhs, int start, int end)
-// Arrays must be big enough to hold subrange
-where |lhs| >= end && |rhs| >= end
-// All items in subrange match
-where all { i in start..end | lhs[i] == rhs[i] }

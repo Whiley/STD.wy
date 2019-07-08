@@ -22,7 +22,6 @@
 // ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
 package std
 
 import std::array
@@ -86,7 +85,13 @@ ensures item == vec.items[ith]:
 // Mutators
 // =====================================================
 
-public function push<T>(Vector<T> vec, T item) -> Vector<T>:
+public function push<T>(Vector<T> vec, T item) -> (Vector<T> nvec)
+// Vector size increased by exactly one
+ensures nvec.length == vec.length + 1
+// Original items unchanged in result
+ensures array::equals<T>(vec.items,nvec.items,0,vec.length)
+// New item added to end
+ensures nvec.items[vec.length] == item:
     //
     if vec.length == |vec.items|:
         // vec is full so must resize
@@ -103,9 +108,13 @@ public function push<T>(Vector<T> vec, T item) -> Vector<T>:
 /**
  * Pop an element off the "stack".
  */
-public function pop<T>(Vector<T> vec) -> (Vector<T> r)
+public function pop<T>(Vector<T> vec) -> (Vector<T> nvec)
 // Cannot pop item of empty vector
-requires vec.length > 0:
+requires vec.length > 0
+// Vector size decreased by exactly one
+ensures nvec.length == vec.length - 1
+// Original items unchanged in result
+ensures array::equals<T>(vec.items,nvec.items,0,nvec.length):
     //
     vec.length = vec.length - 1
     //
@@ -116,7 +125,15 @@ requires vec.length > 0:
  */
 public function set<T>(Vector<T> vec, int ith, T item) -> (Vector<T> result)
 // Index must be within array bounds
-requires ith >= 0 && ith < |vec.items|:
+requires ith >= 0 && ith < |vec.items|
+// Length of vector unchanged
+ensures vec.length == result.length
+// All items below ith remain unchanged
+ensures array::equals<T>(vec.items,result.items,0,ith)
+// All items above ith remain unchanged
+ensures array::equals<T>(vec.items,result.items,ith+1,result.length)
+// Ith element assigned item
+ensures result.items[ith] == item:
     // update element in question
     vec.items[ith] = item
     // done
@@ -132,3 +149,12 @@ ensures r.length == 0:
     vec.length = 0
     // done
     return vec
+
+/**
+ * Equality of vectors
+ */
+public property equals<T>(Vector<T> lhs, Vector<T> rhs)
+// Vector lengths must be equal
+where (lhs.length == rhs.length)
+// Visible vector elements must be equal
+where array::equals<T>(lhs.items,rhs.items,0,lhs.length)
