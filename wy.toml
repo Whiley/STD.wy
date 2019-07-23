@@ -1,10 +1,10 @@
 [package]
 name="std"
 authors=["David J. Pearce"]
-version="0.2.12"
+version="0.2.13"
 
 [build]
-platforms=["whiley"]
+platforms=["whiley","js"]
 
 [check]
 min=-1
