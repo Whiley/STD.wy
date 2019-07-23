@@ -28,7 +28,7 @@ package std
 import std::ascii
 
 // TO BE DEPRECATED
-type uint is (int x) where x >= 0
+import uint from std::integer
 
 // =================================================================
 // Print functions

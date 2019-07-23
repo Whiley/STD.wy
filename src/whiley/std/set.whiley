@@ -31,7 +31,7 @@ import equals from std::array
 import contains from std::array
 
 // Array set is vector where all visible elements unique
-type ArraySet<T> is (Vector<T> v)
+public type ArraySet<T> is (Vector<T> v)
 // All elements up to length are unique
 where unique_elements<T>(v.items,v.length)
 

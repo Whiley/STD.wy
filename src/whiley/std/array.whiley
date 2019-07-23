@@ -43,7 +43,7 @@ public property contains<T>(T[] lhs, T item, int start, int end)
 where some { i in start..end | lhs[i] == item }
 
 // Ensure all elements in an array (upto a given point) are unique
-property unique_elements<T>(T[] items, int end)
+public property unique_elements<T>(T[] items, int end)
 // All items upto end are unique
 where all { i in 0..end, j in (i+1)..end | items[i] != items[j] }
 
