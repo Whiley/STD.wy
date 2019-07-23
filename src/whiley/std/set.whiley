@@ -24,47 +24,31 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package std
 
-import std::ascii
+import std::vector
+import Vector from std::vector
+import unique_elements from std::array
+import equals from std::array
+import contains from std::array
 
-public type uint is (int x) where x >= 0
+// Array set is vector where all visible elements unique
+public type ArraySet<T> is (Vector<T> v)
+// All elements up to length are unique
+where unique_elements<T>(v.items,v.length)
 
-// ====================================================
-// File 
-// ====================================================
+public function insert<T>(ArraySet<T> set, T item) -> (ArraySet<T> r)
+// At most one element inserted
+ensures (r.length >= set.length) && (r.length <= (set.length+1))
+// If item already contained, nothing changed
+ensures contains<T>(set.items,item,0,set.length) <==> (r.length == set.length)
+// All elements unchanged upto original length
+ensures equals<T>(set.items,r.items,0,set.length)
+// Inserted item may be at end
+ensures (r.length == set.length) || (r.items[set.length] == item):
+    //
+    if contains<T>(set.items,item,0,set.length):
+        // Item already contained, so do nothing
+        return set
+    else:
+        // Item not contained, so add
+        return vector::push(set,item)
 
-public type File is  {
-    // Read all bytes of this file in one go.
-    method read_all() -> byte[],
-
-    // Reads at most a given number of bytes from the file.  This
-    // operation may block if the number requested is greater than that
-    // available.
-    method read(uint) -> byte[],
-
-    // Writes a given list of bytes to the output stream.
-    method write(byte[]) -> uint,
-
-    // Flush this output stream thereby forcing those items written
-    // thus far to the output device.
-    method flush(),
-
-    // Check whether the end-of-stream has been reached and, hence,
-    // that there are no further bytes which can be read.
-    method has_more() -> bool,
-
-    // Closes this file reader thereby releasin any resources
-    // associated with it.
-    method close(),
-
-    // Return the number of bytes which can be safely read without
-    // blocking.
-    method available() -> uint
-}
-
-public int READONLY = 0
-public int READWRITE = 1
-
-public type rwMode is (int x) where (x == READONLY) || (x == READWRITE)
-
-// Create a file object for reading / writing
-public native method open(ascii::string fileName, rwMode mode) -> File
