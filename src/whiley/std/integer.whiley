@@ -52,13 +52,6 @@ public type i32 is (int x)
     where x >=-2147483648 && x <= 2147483647
 
 /**
- * Represents all signed integers representable in 64bits
- * of space in the two's complement representation.
- */
-public type i64 is (int x)
-    where x >= -9223372036854775808 && x <= 9223372036854775807
-
-/**
  * Represents all unsigned integers representable in 8bits
  * of space.
  */
@@ -78,13 +71,6 @@ public type u16 is (int x)
  */
 public type u32 is (int x)
     where x >= 0 && x <= 4294967295
-
-/**
- * Represents all unsigned integers representable in 64bits
- * of space.
- */
-public type u64 is (int x)
-    where x >= 0 && x <= 18446744073709551615
 
 /**
  * Represents all possible unsigned integers.
