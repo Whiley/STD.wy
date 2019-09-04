@@ -89,6 +89,43 @@ ensures index is null ==> all { i in start .. |items| | items[i] != item }:
     //
     return null
 
+// find first index after a given start point in list which matches items.
+// If no match, then return null.
+public function first_index_of<T>(T[] items, T[] item) -> (int|null index)
+// Must be actually looking for something
+requires |item| > 0:
+    //
+    return first_index_of<T>(items,item,0)
+
+// find first index after a given start point in list which matches items.
+// If no match, then return null.
+public function first_index_of<T>(T[] items, T[] item, int start) -> (int|null index)
+// Starting point cannot be negative
+requires start >= 0 && start <= |items|
+// Must be actually looking for something
+requires |item| > 0:
+// TODO: provide more complete specification
+    //
+    int i = start
+    //
+    while i <= (|items|-|item|)
+    // i is positive
+    where i >= 0:
+        //
+        int j = 0
+        // for match
+        while j < |item|:
+            if items[i+j] != item[j]:
+                break
+            j = j + 1
+        // did we match
+        if j == |item|:
+            // yes
+            return i
+        i = i + 1
+    //
+    return null
+
 // find last index in list which matches character.  If no match,
 // then return null.
 public function last_index_of<T>(T[] items, T item) -> (int|null index)
@@ -117,7 +154,7 @@ ensures index is null ==> all { i in 0 .. |items| | items[i] != item }:
 // ===================================================================
 
 // replace all occurrences of "old" with "new" in list "items".
-public function replace<T>(T[] items, T old, T n) -> (T[] r)
+public function replace_all<T>(T[] items, T old, T n) -> (T[] r)
 // Every position in items matching old replaced with n
 ensures all { i in 0..|items| | (items[i] == old) ==> r[i] == n }
 // Every other position remains the same
@@ -135,6 +172,58 @@ ensures |items| == |r|:
         if oldItems[i] == old:
             items[i] = n
         i = i + 1
+    //
+    return items
+
+// replace first occurrence of "old" with "new" in list "items".
+public function replace_first<T>(T[] items, T old, T n) -> (T[] r)
+// TODO: update specification
+// Size of resulting array remains the same
+ensures |items| == |r|:
+    //
+    int i = 0
+    T[] oldItems = items // ghost
+    //
+    while i < |items|
+    where i >= 0 && |items| == |oldItems|:
+        // look for item
+        if oldItems[i] == old:
+            // done
+            items[i] = n
+            return items
+        i = i + 1
+    //
+    return items
+
+// replace all occurrences of "old" with "new" in list "items".
+public function replace_first<T>(T[] items, T[] old, T[] n) -> (T[] r):
+    // Look for match
+    int|null i = first_index_of<T>(items,old)
+    // Check whether found
+    if i is null:
+        // nothing found
+        return items
+    else if |old| == |n|:
+        // easy case, can perform in place
+        return copy(n,0,items,i,|old|)
+    else:        
+        // hard case, must resize array
+        int size = (|items| - |old|) + |n|
+        T[] nitems = resize<T>(items,size)
+        // copy new over old
+        nitems = copy<T>(n,0,nitems,i,|n|)
+        // Calculate size of remainder
+        int remainder = size - i - |n|
+        // copy remainder back
+        return copy<T>(items,i+|old|,nitems,i+|n|,remainder)
+
+// replace all occurrences of "old" with "new" in list "items".
+public function replace_all<T>(T[] items, T[] old, T[] n) -> (T[] r):
+    //
+    // NOTE: this is an horifically poor implementation which obviously
+    // needs updating at some point.    
+    while first_index_of<T>(items,old) != null:
+        items = replace_first<T>(items,old,n)
     //
     return items
 
