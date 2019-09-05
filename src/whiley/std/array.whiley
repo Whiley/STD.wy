@@ -227,6 +227,19 @@ public function replace_all<T>(T[] items, T[] old, T[] n) -> (T[] r):
     //
     return items
 
+// replace occurrences of "old" with corresponding occurences in order
+public function replace<T>(T[] items, T[] old, T[][] nn) -> (T[] r):
+    // NOTE: this is an horifically poor implementation which obviously
+    // needs updating at some point.    
+    int i = 0
+    //
+    while i < |nn| && first_index_of<T>(items,old) != null:
+        items = replace_first<T>(items,old,nn[i])
+        i = i + 1
+    //
+    return items
+
+
 // Extract slice of items array between start and up to (but not including) end.
 public function slice<T>(T[] items, int start, int end) -> (T[] r)
 // Given region to slice must make sense
