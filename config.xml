@@ -22,7 +22,7 @@
   <typedef uri="urn:maven-ant" classpath="lib/maven-ant-tasks-2.1.3.jar" resource="org/apache/maven/artifact/ant/antlib.xml"/>
   <!-- Set the classpath for Junit and its dependencies -->
   <maven:dependencies pathId="wyc.jar">
-    <dependency groupId="org.whiley" artifactId="wyc" version="0.5.9"/>
+    <dependency groupId="org.whiley" artifactId="wyc" version="0.6.7"/>
   </maven:dependencies>
   <maven:dependencies pathId="wyjc.jar">
     <dependency groupId="org.whiley" artifactId="wyjc" version="0.4.7"/>

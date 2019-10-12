@@ -1,10 +1,10 @@
 [package]
 name="std"
 authors=["David J. Pearce"]
-version="0.2.14"
+version="0.2.16"
 
 [build]
-platforms=["whiley","js"]
+platforms=["whiley"]
 
 [check]
 min=-1
@@ -15,3 +15,4 @@ depth=1
 [build.whiley]
 source="src/whiley"
 target="bin/wyil"
+verify=false

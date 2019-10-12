@@ -38,6 +38,13 @@ where |lhs| >= end && |rhs| >= end
 // All items in subrange match
 where all { i in start..end | lhs[i] == rhs[i] }
 
+// Check if two array subranges are equal
+public property equals<T>(T[] l, int l_start, T[] r, int r_start, int length)
+// Arrays must be big enough to hold subrange
+where |l| >= (l_start + length) && |r| >= (r_start + length)
+// All items in subrange match
+where all { i in 0..length | l[l_start+i] == r[r_start+i] }
+
 public property contains<T>(T[] lhs, T item, int start, int end)
 // Some index in given range contains item
 where some { i in start..end | lhs[i] == item }
@@ -89,6 +96,43 @@ ensures index is null ==> all { i in start .. |items| | items[i] != item }:
     //
     return null
 
+// find first index after a given start point in list which matches items.
+// If no match, then return null.
+public function first_index_of<T>(T[] items, T[] item) -> (int|null index)
+// Must be actually looking for something
+requires |item| > 0:
+    //
+    return first_index_of<T>(items,item,0)
+
+// find first index after a given start point in list which matches items.
+// If no match, then return null.
+public function first_index_of<T>(T[] items, T[] item, int start) -> (int|null index)
+// Starting point cannot be negative
+requires start >= 0 && start <= |items|
+// Must be actually looking for something
+requires |item| > 0:
+// TODO: provide more complete specification
+    //
+    int i = start
+    //
+    while i <= (|items|-|item|)
+    // i is positive
+    where i >= 0:
+        //
+        int j = 0
+        // for match
+        while j < |item|:
+            if items[i+j] != item[j]:
+                break
+            j = j + 1
+        // did we match
+        if j == |item|:
+            // yes
+            return i
+        i = i + 1
+    //
+    return null
+
 // find last index in list which matches character.  If no match,
 // then return null.
 public function last_index_of<T>(T[] items, T item) -> (int|null index)
@@ -117,7 +161,7 @@ ensures index is null ==> all { i in 0 .. |items| | items[i] != item }:
 // ===================================================================
 
 // replace all occurrences of "old" with "new" in list "items".
-public function replace<T>(T[] items, T old, T n) -> (T[] r)
+public function replace_all<T>(T[] items, T old, T n) -> (T[] r)
 // Every position in items matching old replaced with n
 ensures all { i in 0..|items| | (items[i] == old) ==> r[i] == n }
 // Every other position remains the same
@@ -137,6 +181,71 @@ ensures |items| == |r|:
         i = i + 1
     //
     return items
+
+// replace first occurrence of "old" with "new" in list "items".
+public function replace_first<T>(T[] items, T old, T n) -> (T[] r)
+// TODO: update specification
+// Size of resulting array remains the same
+ensures |items| == |r|:
+    //
+    int i = 0
+    T[] oldItems = items // ghost
+    //
+    while i < |items|
+    where i >= 0 && |items| == |oldItems|:
+        // look for item
+        if oldItems[i] == old:
+            // done
+            items[i] = n
+            return items
+        i = i + 1
+    //
+    return items
+
+// replace all occurrences of "old" with "new" in list "items".
+public function replace_first<T>(T[] items, T[] old, T[] n) -> (T[] r):
+    // Look for match
+    int|null i = first_index_of<T>(items,old)
+    // Check whether found
+    if i is null:
+        // nothing found
+        return items
+    else if |old| == |n|:
+        // easy case, can perform in place
+        return copy(n,0,items,i,|old|)
+    else:        
+        // hard case, must resize array
+        int size = (|items| - |old|) + |n|
+        T[] nitems = resize<T>(items,size)
+        // copy new over old
+        nitems = copy<T>(n,0,nitems,i,|n|)
+        // Calculate size of remainder
+        int remainder = size - i - |n|
+        // copy remainder back
+        return copy<T>(items,i+|old|,nitems,i+|n|,remainder)
+
+// replace all occurrences of "old" with "new" in list "items".
+public function replace_all<T>(T[] items, T[] old, T[] n) -> (T[] r):
+    //
+    // NOTE: this is an horifically poor implementation which obviously
+    // needs updating at some point.    
+    while first_index_of<T>(items,old) != null:
+        items = replace_first<T>(items,old,n)
+    //
+    return items
+
+// replace occurrences of "old" with corresponding occurences in order
+public function replace<T>(T[] items, T[] old, T[][] nn) -> (T[] r):
+    // NOTE: this is an horifically poor implementation which obviously
+    // needs updating at some point.    
+    int i = 0
+    //
+    while i < |nn| && first_index_of<T>(items,old) != null:
+        items = replace_first<T>(items,old,nn[i])
+        i = i + 1
+    //
+    return items
+
 
 // Extract slice of items array between start and up to (but not including) end.
 public function slice<T>(T[] items, int start, int end) -> (T[] r)
@@ -278,3 +387,48 @@ ensures all { i in (destStart+length) .. |dest| | dest[i] == result[i] }:
         j = j + 1
     //
     return dest
+
+/**
+ * Remove an item from this array, whilst shifting everything above it
+ * down.  Thus, the resulting array is one element smaller than the
+ * original.
+ */
+public function remove<T>(T[] src, uint ith) -> (T[] result)
+// Element to be removed must be within bounds
+requires ith < |src|
+// Resulting array has one less element
+ensures |result| == |src| - 1
+// All elements below that removed are preserved
+ensures equals(src,result,0,ith)
+// All elements that were above that removed are preserved
+ensures equals(src,ith+1,result,ith,|result|-ith):
+    // Create array of appropriate size
+    result = [src[0];|src|-1]
+    // Copy over lower chunk
+    result = copy(src,0,result,0,ith)
+    // Copy over upper chunk
+    return copy(src,ith+1,result,ith,|result|-ith)
+
+/**
+ * Swap two items (which may be the same) in an array.  The resulting
+ * array is otherwise unchanged.
+ */
+public function swap<T>(T[] src, uint ith, uint jth) -> (T[] result)
+// Elements to be swap must be within bounds
+requires ith < |src| && jth < |src|
+// Result is same size as dest
+ensures |result| == |src|
+// All elements except ith and jth are identical
+ensures all { i in 0..|src| | i == ith || i == jth || src[i] == result[i] }
+// ith and jth elements are inded swaped
+ensures src[ith] == result[jth] && src[jth] == result[ith]:
+    // Create temporary
+    T tmp = src[ith]
+    // Swap jth over
+    src[ith] = src[jth]
+    // Swap ith over
+    src[jth] = tmp
+    // Done
+    return src
+    
+    
