@@ -38,6 +38,13 @@ where |lhs| >= end && |rhs| >= end
 // All items in subrange match
 where all { i in start..end | lhs[i] == rhs[i] }
 
+// Check if two array subranges are equal
+public property equals<T>(T[] l, int l_start, T[] r, int r_start, int length)
+// Arrays must be big enough to hold subrange
+where |l| >= (l_start + length) && |r| >= (r_start + length)
+// All items in subrange match
+where all { i in 0..length | l[l_start+i] == r[r_start+i] }
+
 public property contains<T>(T[] lhs, T item, int start, int end)
 // Some index in given range contains item
 where some { i in start..end | lhs[i] == item }
@@ -380,3 +387,24 @@ ensures all { i in (destStart+length) .. |dest| | dest[i] == result[i] }:
         j = j + 1
     //
     return dest
+
+/**
+ * Remove an item from this array, whilst shifting everything above it
+ * down.  Thus, the resulting array is one element smaller than the
+ * original.
+ */
+public function remove<T>(T[] src, uint ith) -> (T[] result)
+// Element to be removed must be within bounds
+requires ith < |src|
+// Resulting array has one less element
+ensures |result| == |src| - 1
+// All elements below that removed are preserved
+ensures equals(src,result,0,ith)
+// All elements that were above that removed are preserved
+ensures equals(src,ith+1,result,ith,|result|-ith):
+    // Create array of appropriate size
+    result = [src[0];|src|-1]
+    // Copy over lower chunk
+    result = copy(src,0,result,0,ith)
+    // Copy over upper chunk
+    return copy(src,ith+1,result,ith,|result|-ith)
