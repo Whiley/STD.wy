@@ -145,7 +145,7 @@ ensures result.items[ith] == item:
  */
 public function remove<T>(Vector<T> vec, int ith) -> (Vector<T> result)
 // Index must be within array bounds
-requires ith >= 0 && ith < |vec.items|
+requires ith >= 0 && ith < vec.length
 // Length of vector reduced by one
 ensures (vec.length - 1) == result.length
 // All items below ith remain unchanged
@@ -156,6 +156,24 @@ ensures array::equals<T>(vec.items,ith+1,result.items,ith,result.length-ith):
     T[] items = array::remove<T>(vec.items,ith)
     // Done
     return { items: items, length: vec.length - 1 }
+
+/**
+ * Swap two items (which may be the same) in a vector.  The resulting
+ * vector is otherwise unchanged.
+ */
+public function swap<T>(Vector<T> vec, uint ith, uint jth) -> (Vector<T> result)
+// Elements to be swap must be within bounds
+requires ith < vec.length && jth < vec.length
+// Result is same size as dest
+ensures result.length == vec.length
+// All elements except ith and jth are identical
+ensures all { i in 0..vec.length | i == ith || i == jth || vec.items[i] == result.items[i] }
+// ith and jth elements are inded swaped
+ensures vec.items[ith] == result.items[jth] && vec.items[jth] == result.items[ith]:
+    // Swap underling items
+    vec.items = array::swap(vec.items,ith,jth)
+    // Done
+    return vec
 
 /**
  * Clear the vector, removing all elements

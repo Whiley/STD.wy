@@ -408,3 +408,27 @@ ensures equals(src,ith+1,result,ith,|result|-ith):
     result = copy(src,0,result,0,ith)
     // Copy over upper chunk
     return copy(src,ith+1,result,ith,|result|-ith)
+
+/**
+ * Swap two items (which may be the same) in an array.  The resulting
+ * array is otherwise unchanged.
+ */
+public function swap<T>(T[] src, uint ith, uint jth) -> (T[] result)
+// Elements to be swap must be within bounds
+requires ith < |src| && jth < |src|
+// Result is same size as dest
+ensures |result| == |src|
+// All elements except ith and jth are identical
+ensures all { i in 0..|src| | i == ith || i == jth || src[i] == result[i] }
+// ith and jth elements are inded swaped
+ensures src[ith] == result[jth] && src[jth] == result[ith]:
+    // Create temporary
+    T tmp = src[ith]
+    // Swap jth over
+    src[ith] = src[jth]
+    // Swap ith over
+    src[jth] = tmp
+    // Done
+    return src
+    
+    
