@@ -125,7 +125,7 @@ ensures array::equals<T>(vec.items,nvec.items,0,nvec.length):
  */
 public function set<T>(Vector<T> vec, int ith, T item) -> (Vector<T> result)
 // Index must be within array bounds
-requires ith >= 0 && ith < |vec.items|
+requires ith >= 0 && ith < vec.length
 // Length of vector unchanged
 ensures vec.length == result.length
 // All items below ith remain unchanged
