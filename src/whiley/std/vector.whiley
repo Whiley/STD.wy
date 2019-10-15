@@ -99,11 +99,38 @@ ensures nvec.items[vec.length] == item:
         // double size of internal array
         vec.items = array::resize<T>(vec.items,nlen,item)
     else:
+        // Add new item
         vec.items[vec.length] = item
-    //
+    // Increase length by one
     vec.length = vec.length + 1        
     //
     return vec
+
+public function push_all<T>(Vector<T> vec, T[] items) -> (Vector<T> nvec)
+// Vector size increased by exactly one
+ensures nvec.length == vec.length + |items|
+// Original items unchanged in result
+ensures array::equals<T>(vec.items,nvec.items,0,vec.length)
+// New items added to end
+ensures array::equals<T>(items,0,nvec.items,vec.length,|items|):
+    //
+    int len = vec.length + |items|
+    // Sanity check inputs
+    if |items| == 0:
+        // Nothing to do
+        return vec
+    else if len > |vec.items|:
+        // vec is full so must resize
+        int nlen = (vec.length*2) + |items|
+        // double size of internal array
+        vec.items = array::resize<T>(vec.items,nlen,items[0])
+    // Add new items
+    vec.items = array::copy(items,0,vec.items,vec.length,|items|)
+    // Increase length by number added
+    vec.length = vec.length + |items|
+    //
+    return vec
+
 
 /**
  * Pop an element off the "stack".
