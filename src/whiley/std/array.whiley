@@ -49,6 +49,18 @@ public property contains<T>(T[] lhs, T item, int start, int end)
 // Some index in given range contains item
 where some { i in start..end | lhs[i] == item }
 
+// Check whether a subsequence is contained with an array
+public property matches<T>(T[] arr, T[] subseq)
+where matches<T>(arr,subseq,0,|arr|)
+
+// Check whether a subsequence is contained with an array slice
+public property matches<T>(T[] arr, T[] subseq, int start, int end)
+where some { i in start..end | equals(arr,i,subseq,0,|subseq|) }
+
+// Check whether a given index is the first match of a subsequence
+public property first_match<T>(T[] arr, T[] subseq, int index)
+where equals(arr,index,subseq,0,|subseq|) && !matches<T>(arr,subseq,0,index)
+
 // Ensure all elements in an array (upto a given point) are unique
 public property unique_elements<T>(T[] items, int end)
 // All items upto end are unique
@@ -184,9 +196,14 @@ ensures |items| == |r|:
 
 // replace first occurrence of "old" with "new" in list "items".
 public function replace_first<T>(T[] items, T old, T n) -> (T[] r)
-// TODO: update specification
 // Size of resulting array remains the same
-ensures |items| == |r|:
+ensures |items| == |r|
+// Can only replace old with new
+ensures all { i in 0..|items| | items[i] == r[i] || (items[i] == old && r[i] == n) }
+// Must replace first match of old
+ensures all { i in 0..|items| | (items[i] == old && !contains(items,old,0,i)) ==> r[i] == n }
+// Must not replace any other matches
+ensures all { i in 0..|items| | (items[i] == old && contains(items,old,0,i)) ==> r[i] == old }:
     //
     int i = 0
     T[] oldItems = items // ghost
@@ -202,8 +219,20 @@ ensures |items| == |r|:
     //
     return items
 
-// replace all occurrences of "old" with "new" in list "items".
-public function replace_first<T>(T[] items, T[] old, T[] n) -> (T[] r):
+// replace first occurrence of "old" with "new" in list "items".
+public function replace_first<T>(T[] items, T[] old, T[] n) -> (T[] r)
+// Must actually be replacing something
+requires |old| > 0
+// Length may differ after match
+ensures matches(items,old) ==> (|r| + |old|) == (|items| + |n|)
+// Length doesn't differ if no match
+ensures !matches(items,old) ==> (|r| == |items|)
+// First match always replaced
+ensures all { i in 0..|items| | first_match(items,old,i) ==> equals(r,i,n,0,|n|) }
+// Items below first match are retained
+ensures all { i in 0..|items| | first_match(items,old,i) ==> equals(items,0,r,0,i) }
+// Items above first match are retained
+ensures all { i in 0..|items| | first_match(items,old,i) ==> equals(items,i+|old|,r,i+|n|,|items| - (i+|old|)) }:
     // Look for match
     int|null i = first_index_of<T>(items,old)
     // Check whether found
