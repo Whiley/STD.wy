@@ -24,8 +24,7 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package std
 
-import std::vector
-import Vector from std::vector
+import std::vector with Vector
 import unique_elements from std::array
 import equals from std::array
 import contains from std::array
