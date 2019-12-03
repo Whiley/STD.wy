@@ -87,13 +87,11 @@ public function to_unsigned_byte(u8 v) -> byte:
     //
     byte mask = 0b00000001
     byte r = 0b
-    int i = 0
-    while i < 8:
+    for i in 0..8:
         if (v % 2) == 1:
             r = r | mask
         v = v / 2
         mask = mask << 1
-        i = i + 1
     return r
 
 // Convert a signed integer into a single byte
@@ -110,14 +108,12 @@ public function to_signed_byte(i8 v) -> byte:
 // convert a byte into a string
 public function to_string(byte b) -> ascii::string:
     ascii::string r = [0; 'b']
-    int i = 0
-    while i < 8:
+    for i in 0..8:
         if (b & 0b00000001) == 0b00000001:
             r[7-i] = '1'
         else:
             r[7-i] = '0'
         b = b >> 1
-        i = i + 1
     return r
 
 // Convert a byte into an unsigned int.  This assumes a little endian
@@ -139,12 +135,10 @@ public function to_uint(byte b) -> u8:
 public function to_uint(byte[] bytes) -> uint:
     int val = 0
     int base = 1
-    int i = 0
-    while i < |bytes|:
+    for i in 0..|bytes|:
         int v = to_uint(bytes[i]) * base
         val = val + v
         base = base * 256
-        i = i + 1
     return val
 
 // Convert a byte into an unsigned int.  This assumes a little endian
@@ -170,12 +164,11 @@ public function to_int(byte b) -> int:
 public function to_int(byte[] bytes) -> int:
     int val = 0
     int base = 1
-    int i = 0
-    while i < |bytes|:
+    //
+    for i in 0..|bytes|:
         int v = to_uint(bytes[i]) * base
         val = val + v
         base = base * 256
-        i = i + 1
     // finally, add the sign
     if val >= (base/2):
         return -(base-val)

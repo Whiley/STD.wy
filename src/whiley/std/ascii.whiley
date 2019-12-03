@@ -154,34 +154,28 @@ public function to_byte(char v) -> byte:
     //
     byte mask = 0b00000001
     byte r = 0b
-    int i = 0
-    while i < 8:
+    for i in 0..8:
         if (v % 2) == 1:
             r = r | mask
         v = v / 2
         mask = mask << 1
-        i = i + 1
     return r
 
 // Convert an ASCII string into a list of bytes
 public function to_bytes(string s) -> byte[]:
     byte[] r = [0b; |s|]
-    int i = 0
-    while i < |s| where i >= 0:
+    for i in 0..|s|:
         r[i] = to_byte(s[i])
-        i = i + 1
     return r
 
 // Convert a list of bytes into an ASCII string
 public function from_bytes(byte[] data) -> string:
     string r = [0; |data|]
-    int i = 0
-    while i < |data| where i >= 0:
+    for i in 0..|data|:
         uint v = integer::to_uint(data[i])
         if v >= 127:
             v = '?'
         r[i] = v
-        i = i + 1
     return r
 
 public function is_upper_case(char c) -> bool:
@@ -237,13 +231,11 @@ public function to_string(int item) -> string:
  */
 public function to_string(int[] items) -> string:
     string r = ""
-    uint i = 0
     // Convert each item in array to string
-    while i < |items|:
+    for i in 0..|items|:
         if i != 0:
             r = array::append(r,",")
         r = array::append(r,to_string(items[i]))
-        i = i + 1
     // Done
     return r    
 
@@ -290,14 +282,12 @@ requires |input| > 0:
         negative = false
     // now, parse remaining digits
     int r = 0
-    int i = start
-    while i < |input|:
+    for i in start..|input|:
         char c = input[i]
         r = r * 10
         if !ascii::is_digit(c):
             return null
         r = r + ((int) c - '0')
-        i = i + 1
     // done
     if negative:
         return -r

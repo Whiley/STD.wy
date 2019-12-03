@@ -94,17 +94,12 @@ ensures index is int ==> all { i in start .. index | items[i] != item }
 // If null returned, no element in items matches item
 ensures index is null ==> all { i in start .. |items| | items[i] != item }:
     //
-    int i = start
-    //
-    while i < |items|
-    // i is positive
-    where i >= 0
+    for i in start .. |items|
     // No element seen so far matches item
     where all { j in start .. i | items[j] != item }:
         //
         if items[i] == item:
             return i
-        i = i + 1
     //
     return null
 
@@ -181,16 +176,14 @@ ensures all { i in 0..|items| | (items[i] != old) ==> r[i] == items[i] }
 // Size of resulting array remains the same
 ensures |items| == |r|:
     //
-    int i = 0
     T[] oldItems = items // ghost
     //
-    while i < |items|
-    where i >= 0 && |items| == |oldItems|
+    for i in 0..|items|
+    where |items| == |oldItems|
     where all { k in 0..i | (oldItems[k] == old) ==> (items[k] == n) }
     where all { k in 0..|items| | (oldItems[k] != old) ==> (items[k] == oldItems[k]) }:
         if oldItems[i] == old:
             items[i] = n
-        i = i + 1
     //
     return items
 
@@ -205,17 +198,15 @@ ensures all { i in 0..|items| | (items[i] == old && !contains(items,old,0,i)) ==
 // Must not replace any other matches
 ensures all { i in 0..|items| | (items[i] == old && contains(items,old,0,i)) ==> r[i] == old }:
     //
-    int i = 0
     T[] oldItems = items // ghost
     //
-    while i < |items|
-    where i >= 0 && |items| == |oldItems|:
+    for i in 0..|items|
+    where |items| == |oldItems|:
         // look for item
         if oldItems[i] == old:
             // done
             items[i] = n
             return items
-        i = i + 1
     //
     return items
 
@@ -316,13 +307,11 @@ ensures r[|items|] == item
 ensures |r| == |items|+1:
     //
     T[] nitems = [item; |items| + 1]
-    int i = 0
     //
-    while i < |items| 
-    where i >= 0 && i <= |items| && |nitems| == |items|+1
+    for i in 0..|items|
+    where |nitems| == |items|+1
     where all { k in 0..i | nitems[k] == items[k] }:
         nitems[i] = items[i]
-        i = i + 1
     //
     return nitems
 
@@ -335,13 +324,11 @@ ensures r[0] == item
 ensures |r| == |items|+1:
     //
     T[] nitems = [item; |items| + 1]
-    int i = 0
     //
-    while i < |items| 
-    where i >= 0 && i <= |items| && |nitems| == |items|+1
+    for i in 0..|items|
+    where |nitems| == |items|+1
     where all { k in 0..i | nitems[k+1] == items[k] }:
         nitems[i+1] = items[i]
-        i = i + 1 
     //
     return nitems
 
@@ -358,11 +345,9 @@ ensures all { k in 0..size | result[k] == src[k] }:
         return src
     else:
         result = [src[0]; size]
-        int i = 0
         // copy what we can over
-        while i < size:
+        for i in 0..size:
             result[i] = src[i]
-            i = i + 1
         //
         return result
 
@@ -406,13 +391,11 @@ ensures all { i in 0 .. length | src[i+srcStart] == result[i+destStart] }
 // All elements above copied region are same
 ensures all { i in (destStart+length) .. |dest| | dest[i] == result[i] }:
     //
-    int i = srcStart
     int j = destStart
     int srcEnd = srcStart + length
     //
-    while i < srcEnd:
+    for i in srcStart .. srcEnd:
         dest[j] = src[i]
-        i = i + 1
         j = j + 1
     //
     return dest

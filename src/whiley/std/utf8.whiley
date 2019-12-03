@@ -85,16 +85,14 @@ public function length(string str) -> (uint x)
 // bytes, since it may contain code points that occupy multiple bytes.
 ensures x <= |str|:
     //
-    uint i = 0
     uint len = 0
     //
-    while i < |str|:
+    for i in 0..|str|:
         byte data = str[i]
         // Check whether have internal byte or not.
         if (data & TRAILING_BYTE_MASK) != data:
             // Not internal byte, hence identifies code point.
             len = len + 1
-        i = i + 1
     //
     return len
 
