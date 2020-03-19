@@ -175,7 +175,7 @@ public function from_bytes(byte[] data) -> string:
         uint v = integer::to_uint(data[i])
         if v >= 127:
             v = '?'
-        r[i] = v
+        r[i] = (char) v
     return r
 
 public function is_upper_case(char c) -> bool:

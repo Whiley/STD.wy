@@ -99,7 +99,7 @@ public function to_signed_byte(i8 v) -> byte:
     //
     u8 u
     if v >= 0:
-        u = v
+        u = (u8) v
     else:
         u = v + 256
     return to_unsigned_byte(u)
@@ -119,7 +119,7 @@ public function to_string(byte b) -> ascii::string:
 // Convert a byte into an unsigned int.  This assumes a little endian
 // encoding.
 public function to_uint(byte b) -> u8:
-    int r = 0
+    u8 r = 0
     int base = 1
     while b != 0b:
         if (b & 0b00000001) == 0b00000001:
@@ -133,7 +133,7 @@ public function to_uint(byte b) -> u8:
 // Convert a byte array into an unsigned int assuming a little endian
 // form for both individual bytes, and the array as a whole
 public function to_uint(byte[] bytes) -> uint:
-    int val = 0
+    uint val = 0
     int base = 1
     for i in 0..|bytes|:
         int v = to_uint(bytes[i]) * base
