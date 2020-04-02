@@ -72,11 +72,11 @@ where all { i in 0..end, j in (i+1)..end | items[i] != items[j] }
 
 // find first index in list which matches character.  If no match,
 // then return null.
-public function first_index_of<T>(T[] items, T item) -> (int|null index)
+public function first_index_of<T>(T[] items, T item) -> (uint|null index)
 // If int returned, element at this position matches item
-ensures index is int ==> items[index] == item
+ensures index is uint ==> items[index] == item
 // If int returned, element at this position is first match
-ensures index is int ==> all { i in 0 .. index | items[i] != item }
+ensures index is uint ==> all { i in 0 .. index | items[i] != item }
 // If null returned, no element in items matches item
 ensures index is null ==> all { i in 0 .. |items| | items[i] != item }:
     //
@@ -84,13 +84,13 @@ ensures index is null ==> all { i in 0 .. |items| | items[i] != item }:
 
 // find first index after a given start point in list which matches character.
 // If no match, then return null.
-public function first_index_of<T>(T[] items, T item, int start) -> (int|null index)
+public function first_index_of<T>(T[] items, T item, uint start) -> (uint|null index)
 // Starting point cannot be negative
 requires start >= 0 && start <= |items|
 // If int returned, element at this position matches item
-ensures index is int ==> items[index] == item
+ensures index is uint ==> items[index] == item
 // If int returned, element at this position is first match
-ensures index is int ==> all { i in start .. index | items[i] != item }
+ensures index is uint ==> all { i in start .. index | items[i] != item }
 // If null returned, no element in items matches item
 ensures index is null ==> all { i in start .. |items| | items[i] != item }:
     //
@@ -99,13 +99,13 @@ ensures index is null ==> all { i in start .. |items| | items[i] != item }:
     where all { j in start .. i | items[j] != item }:
         //
         if items[i] == item:
-            return i
+            return (uint) i
     //
     return null
 
 // find first index after a given start point in list which matches items.
 // If no match, then return null.
-public function first_index_of<T>(T[] items, T[] item) -> (int|null index)
+public function first_index_of<T>(T[] items, T[] item) -> (uint|null index)
 // Must be actually looking for something
 requires |item| > 0:
     //
@@ -113,7 +113,7 @@ requires |item| > 0:
 
 // find first index after a given start point in list which matches items.
 // If no match, then return null.
-public function first_index_of<T>(T[] items, T[] item, int start) -> (int|null index)
+public function first_index_of<T>(T[] items, T[] item, uint start) -> (uint|null index)
 // Starting point cannot be negative
 requires start >= 0 && start <= |items|
 // Must be actually looking for something
@@ -135,18 +135,18 @@ requires |item| > 0:
         // did we match
         if j == |item|:
             // yes
-            return i
+            return (uint) i
         i = i + 1
     //
     return null
 
 // find last index in list which matches character.  If no match,
 // then return null.
-public function last_index_of<T>(T[] items, T item) -> (int|null index)
+public function last_index_of<T>(T[] items, T item) -> (uint|null index)
 // If int returned, element at this position matches item
-ensures index is int ==> items[index] == item
+ensures index is uint ==> items[index] == item
 // If int returned, element at this position is last match
-ensures index is int ==> all { i in (index+1) .. |items| | items[i] != item }
+ensures index is uint ==> all { i in (index+1) .. |items| | items[i] != item }
 // If null returned, no element in items matches item
 ensures index is null ==> all { i in 0 .. |items| | items[i] != item }:
     //
@@ -159,7 +159,7 @@ ensures index is null ==> all { i in 0 .. |items| | items[i] != item }:
         //
         i = i - 1
         if items[i] == item:
-            return i
+            return (uint) i
     //
     return null
 
@@ -225,7 +225,7 @@ ensures all { i in 0..|items| | first_match(items,old,i) ==> equals(items,0,r,0,
 // Items above first match are retained
 ensures all { i in 0..|items| | first_match(items,old,i) ==> equals(items,i+|old|,r,i+|n|,|items| - (i+|old|)) }:
     // Look for match
-    int|null i = first_index_of<T>(items,old)
+    uint|null i = first_index_of<T>(items,old)
     // Check whether found
     if i is null:
         // nothing found
@@ -235,12 +235,12 @@ ensures all { i in 0..|items| | first_match(items,old,i) ==> equals(items,i+|old
         return copy(n,0,items,i,|old|)
     else:        
         // hard case, must resize array
-        int size = (|items| - |old|) + |n|
+        uint size = (|items| - |old|) + |n|
         T[] nitems = resize<T>(items,size)
         // copy new over old
         nitems = copy<T>(n,0,nitems,i,|n|)
         // Calculate size of remainder
-        int remainder = size - i - |n|
+        uint remainder = size - i - |n|
         // copy remainder back
         return copy<T>(items,i+|old|,nitems,i+|n|,remainder)
 
@@ -268,7 +268,7 @@ public function replace<T>(T[] items, T[] old, T[][] nn) -> (T[] r):
 
 
 // Extract slice of items array between start and up to (but not including) end.
-public function slice<T>(T[] items, int start, int end) -> (T[] r)
+public function slice<T>(T[] items, uint start, uint end) -> (T[] r)
 // Given region to slice must make sense
 requires start >= 0 && start <= end && end <= |items|
 // Size of slice determined by difference between start and end

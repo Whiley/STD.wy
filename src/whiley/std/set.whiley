@@ -49,5 +49,5 @@ ensures (r.length == set.length) || (r.items[set.length] == item):
         return set
     else:
         // Item not contained, so add
-        return vector::push(set,item)
+        return (ArraySet<T>) vector::push<T>(set,item)
 

@@ -48,11 +48,11 @@ where (i > 2 && is_internal(chars[i])) ==> is_start_n(chars[i-2],4)
 // TWO_BYTE_MASK.
 public type string is (byte[] chars)
 // Ensure all internal bytes in second position are valid
-where all { i in 0..|chars| | valid_2nd_byte(chars,i) }
+where all { i in 0..|chars| | valid_2nd_byte(chars, (uint) i) }
 // Ensure all internal bytes in third position are valid
-where all { i in 0..|chars| | valid_3rd_byte(chars,i) }
+where all { i in 0..|chars| | valid_3rd_byte(chars, (uint) i) }
 // Ensure all internal bytes in fourth position are valid
-where all { i in 0..|chars| | valid_4th_byte(chars,i) }
+where all { i in 0..|chars| | valid_4th_byte(chars, (uint) i) }
 
 // Identifies a UTF-8 code point that occupies one byte.  These
 // characters corresponding directly to the ASCII character set.

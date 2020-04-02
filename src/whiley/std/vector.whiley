@@ -170,7 +170,7 @@ ensures result.items[ith] == item:
  * Remove the ith element of a vector.  Observe that this takes time
  * linear in the size of the resulting vector.
  */
-public function remove<T>(Vector<T> vec, int ith) -> (Vector<T> result)
+public function remove<T>(Vector<T> vec, uint ith) -> (Vector<T> result)
 // Index must be within array bounds
 requires ith >= 0 && ith < vec.length
 // Length of vector reduced by one
