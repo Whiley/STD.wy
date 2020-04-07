@@ -443,4 +443,63 @@ ensures src[ith] == result[jth] && src[jth] == result[ith]:
     // Done
     return src
     
+
+// ===================================================================
+// Map / Reduce / Filter
+// ===================================================================
+
+// Map all items in a given array from one type to another.
+public function map<S,T>(S[] items, function(S)->(T) fn) -> (T[] r)
+// Resulting array same size as original
+ensures |items| == |r|
+// All items are properly mapped
+ensures all { i in 0..|items| | r[i] == fn(items[i]) }:
+    //
+    if |items| == 0:
+        return []
+    else:
+        // Initialise first element
+        T[] nitems = [fn(items[0]);|items|]
+        // Assign remainder
+        for i in 1 .. |nitems|:
+            nitems[i] = fn(items[i])
+        // Done
+        return nitems
+
+// Eliminate all elements which fail to match a given filter predicate
+public function filter<T>(T[] items, function(T)->(bool) fn) -> (T[] r)
+// Resulting array not bigger than original
+ensures |items| >= |r|
+// Filter predicate holds for all returned items
+ensures all { i in 0..|r| | fn(r[i]) }:
+    // Shift all matching items down
+    final uint len = |items|
+    uint j = 0
+    for i in 0..|items|
+    // size of array doesn't change
+    where |items| == len && j <= i:
+        if fn(items[i]):
+            items[j] = items[i]
+            j = j + 1
+    //
+    return resize(items,j)
+
+// Fold-left with default for empty arrays.
+public function foldl<T>(T[] items, T dEfault, function(T,T)->(T) fn) -> (T r):
+    if |items| == 0:
+        return dEfault
+    else:
+        return foldl<T>(items,fn)
+
+// Fold-left without default
+public function foldl<T>(T[] items, function(T,T)->(T) fn) -> (T r)
+// Cannot fold an empty array without a default value
+requires |items| > 0:
+    //
+    T acc = items[0]
+    //
+    for i in 1..|items|:
+        acc = fn(acc,items[i])
+    //
+    return acc
     
