@@ -22,7 +22,7 @@
 // ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-package std
+package std.collections
 
 import std::array
 import uint from std::integer
@@ -37,14 +37,20 @@ public type Vector<T> is {
 // =====================================================
 
 // Construct empty vector
-public function Vector<T>() -> Vector<T>:
+public function Vector<T>() -> (Vector<T> r)
+// Returned vector is empty
+ensures r.length == 0:
     return {
         items: [],
         length: 0
     }
 
 // Construct initialised vector
-public function Vector<T>(T[] items) -> Vector<T>:
+public function Vector<T>(T[] items) -> (Vector<T> r)
+// Return contains matching number of items 
+ensures r.length == |items|
+// Return contains matching items
+ensures array::equals<T>(items,r.items,0,|items|):
     return {
         items: items,
         length: |items|

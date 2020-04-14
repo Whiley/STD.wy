@@ -22,18 +22,41 @@
 // ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-package std
+package std.collections
 
-import std::vector with Vector
-import unique_elements from std::array
+import std::collections::vector with Vector
+import std::array
 import equals from std::array
 import contains from std::array
 
 // Array set is vector where all visible elements unique
 public type ArraySet<T> is (Vector<T> v)
 // All elements up to length are unique
-where unique_elements<T>(v.items,v.length)
+where array::unique_elements<T>(v.items,v.length)
 
+/**
+ * Construct empty array set.
+ */
+public function ArraySet<T>() -> (ArraySet<T> r)
+// Returned array set is empty
+ensures r.length == 0:
+    return {length: 0, items:[]}
+
+/**
+ * Construct array set from set of unique items.
+ */
+public function ArraySet<T>(T[] items) -> (Vector<T> r)
+// Initial set of items must be unique
+requires array::unique_elements<T>(items,|items|)
+// Return contains matching number of items 
+ensures r.length == |items|
+// Return contains matching items
+ensures array::equals<T>(items,r.items,0,|items|):
+    return vector::Vector<T>(items)
+
+/**
+ * Insert element into an array set
+ */
 public function insert<T>(ArraySet<T> set, T item) -> (ArraySet<T> r)
 // At most one element inserted
 ensures (r.length >= set.length) && (r.length <= (set.length+1))
