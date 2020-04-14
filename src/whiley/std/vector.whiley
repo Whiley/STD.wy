@@ -80,7 +80,18 @@ requires ith >= 0 && ith < vec.length
 ensures item == vec.items[ith]:
     //
     return vec.items[ith]
-    
+
+/**
+ * Convert vector into an array.
+ */
+public function to_array<T>(Vector<T> vec) -> (T[] items)
+// Size of returned array matches vector size
+ensures |items| == vec.length
+// Ensure returned items match those in vector
+ensures array::equals<T>(vec.items,0,items,0,vec.length):
+    // Slice up the array
+    return array::slice<T>(vec.items,0,vec.length)
+
 // =====================================================
 // Mutators
 // =====================================================
