@@ -31,7 +31,9 @@ public type fn<T> is function(T)->(u32)
 
 // Simple hash function for integers
 public function hash(int x) -> u32:
-    return x % 4294967295
+    // eventually cast better here?
+    u32 _x = (x+2147483648)
+    return _x % 4294967295
 
 // Simple hash function for booleans
 public function hash(bool b) -> u32:
