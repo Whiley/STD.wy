@@ -235,7 +235,8 @@ ensures all { i in 0..|items| | first_match(items,old,i) ==> equals(items,i+|old
     else:        
         // hard case, must resize array
         uint size = (|items| - |old|) + |n|
-        T[] nitems = resize<T>(items,size)
+        // Resize with temporary fill
+        T[] nitems = resize<T>(items,size,old[0])
         // copy new over old
         nitems = copy<T>(n,0,nitems,i,|n|)
         // Calculate size of remainder
@@ -244,7 +245,9 @@ ensures all { i in 0..|items| | first_match(items,old,i) ==> equals(items,i+|old
         return copy<T>(items,i+|old|,nitems,i+|n|,remainder)
 
 // replace all occurrences of "old" with "new" in list "items".
-public function replace_all<T>(T[] items, T[] old, T[] n) -> (T[] r):
+public function replace_all<T>(T[] items, T[] old, T[] n) -> (T[] r)
+// must have something to replace
+requires |old| > 0:
     //
     // NOTE: this is an horifically poor implementation which obviously
     // needs updating at some point.    
@@ -254,7 +257,9 @@ public function replace_all<T>(T[] items, T[] old, T[] n) -> (T[] r):
     return items
 
 // replace occurrences of "old" with corresponding occurences in order
-public function replace<T>(T[] items, T[] old, T[][] nn) -> (T[] r):
+public function replace<T>(T[] items, T[] old, T[][] nn) -> (T[] r)
+// must have something to replace
+requires |old| > 0:
     // NOTE: this is an horifically poor implementation which obviously
     // needs updating at some point.    
     int i = 0
@@ -332,7 +337,7 @@ ensures |r| == |items|+1:
     return nitems
 
 public function resize<T>(T[] src, int size) -> (T[] result)
-// Cannot create an array of negative size
+// Cannot create an array of negative size, and array must decrease in size
 requires size >= 0 && size <= |src|
 // Resulting array must have desired size
 ensures |result| == size
