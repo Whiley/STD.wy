@@ -26,8 +26,8 @@ package std::collections
 
 import u32, uint from std::integer
 import string from std::ascii
-import std::pair with Pair
 import std::option with Option
+import std::collections::pair with Pair
 import std::collections::vector with Vector
 import std::collections::hash
 import std::collections::iterator with Iterator

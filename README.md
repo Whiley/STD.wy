@@ -29,24 +29,24 @@ modules of this library are nested in the `std` path.  They are:
   values, and includes various useful operations (e.g. `map`,
   `filter`, etc).
 
-- `std::pair`.  This provides a simple pair container which includes
-  various useful operations (e.g. `swap`, `map`, etc).
-
 - `std::collections::array_set`.  This provides a set implementation
   backed by an array which is suitable for arrays of modest size only,
   or those which are changed infrequently.
 
 - `std::collections::hash`.  This provides a standard concept of a
-  `hash` function as necessary for hash-based collections.
+  `hash` function as necessary for hash-based containers.
 
 - `std::collections::hash_map`.  This provides a straightforward
-  implementation of a hash map collection.
+  implementation of a hash map container.
 
 - `std::collections::iterator`.  This provides a standard concept of
-  an iterator, as necessary for iterating various collections.
+  an iterator, as necessary for iterating various containers.
+
+- `std::collections::pair`.  This provides a simple pair container which includes
+  various useful operations (e.g. `swap`, `map`, etc).
 
 - `std::collections::vector`.  This provides a straightforward
-  implementation of a resizeable array collection.
+  implementation of a resizeable array container.
 
 At this stage, the library is very much a work-in-progress.  Several
 other modules are scheduled for inclusion in the future:
