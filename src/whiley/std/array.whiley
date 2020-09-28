@@ -84,8 +84,8 @@ ensures index is null ==> all { i in 0 .. |items| | items[i] != item }:
 // find first index after a given start point in list which matches character.
 // If no match, then return null.
 public function first_index_of<T>(T[] items, T item, uint start) -> (uint|null index)
-// Starting point cannot be negative
-requires start >= 0 && start <= |items|
+// Starting point cannot be beyond array
+requires start <= |items|
 // If int returned, element at this position matches item
 ensures index is uint ==> items[index] == item
 // If int returned, element at this position is first match
@@ -113,8 +113,8 @@ requires |item| > 0:
 // find first index after a given start point in list which matches items.
 // If no match, then return null.
 public function first_index_of<T>(T[] items, T[] item, uint start) -> (uint|null index)
-// Starting point cannot be negative
-requires start >= 0 && start <= |items|
+// Starting point cannot be beyond array
+requires start <= |items|
 // Must be actually looking for something
 requires |item| > 0:
 // TODO: provide more complete specification
@@ -274,7 +274,7 @@ requires |old| > 0:
 // Extract slice of items array between start and up to (but not including) end.
 public function slice<T>(T[] items, uint start, uint end) -> (T[] r)
 // Given region to slice must make sense
-requires start >= 0 && start <= end && end <= |items|
+requires start <= end && end <= |items|
 // Size of slice determined by difference between start and end
 ensures |r| == (end - start)
 // Items returned in slice match those in region from start
@@ -336,9 +336,9 @@ ensures |r| == |items|+1:
     //
     return nitems
 
-public function resize<T>(T[] src, int size) -> (T[] result)
-// Cannot create an array of negative size, and array must decrease in size
-requires size >= 0 && size <= |src|
+public function resize<T>(T[] src, uint size) -> (T[] result)
+// Cannot create larger array (as how to fill new elements?)
+requires size <= |src|
 // Resulting array must have desired size
 ensures |result| == size
 // All elements must be copied over if increasing in size
@@ -355,9 +355,7 @@ ensures all { k in 0..size | result[k] == src[k] }:
         //
         return result
 
-public function resize<T>(T[] items, int size, T item) -> (T[] result)
-// Required size cannot be negative
-requires size >= 0
+public function resize<T>(T[] items, uint size, T item) -> (T[] result)
 // Resulting array must have desired size
 ensures |result| == size
 // All elements must be copied over if increasing in size
