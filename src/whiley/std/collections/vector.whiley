@@ -112,7 +112,7 @@ ensures nvec.items[vec.length] == item:
     //
     if vec.length == |vec.items|:
         // vec is full so must resize
-        int nlen = (vec.length*2)+1
+        uint nlen = (vec.length*2)+1
         // double size of internal array
         vec.items = array::resize<T>(vec.items,nlen,item)
     else:
@@ -138,7 +138,7 @@ ensures array::equals<T>(items,0,nvec.items,vec.length,|items|):
         return vec
     else if len > |vec.items|:
         // vec is full so must resize
-        int nlen = (vec.length*2) + |items|
+        uint nlen = (vec.length*2) + |items|
         // double size of internal array
         vec.items = array::resize<T>(vec.items,nlen,items[0])
     // Add new items
