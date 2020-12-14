@@ -87,7 +87,7 @@ ensures r >= 0:
     //
     int square = 1
     int delta = 3
-    while square <= x:
+    while square <= x where delta >= 3:
         square = square + delta
         delta = delta + 2
     return (delta/2) - 1

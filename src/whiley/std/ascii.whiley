@@ -164,14 +164,14 @@ public function to_byte(char v) -> byte:
 // Convert an ASCII string into a list of bytes
 public function to_bytes(string s) -> byte[]:
     byte[] r = [0b; |s|]
-    for i in 0..|s|:
+    for i in 0..|s| where |r| == |s|:
         r[i] = to_byte(s[i])
     return r
 
 // Convert a list of bytes into an ASCII string
 public function from_bytes(byte[] data) -> string:
     string r = [0; |data|]
-    for i in 0..|data|:
+    for i in 0..|data| where |r| == |data|:
         u8 v = integer::to_uint(data[i])
         if v >= 127:
             v = '?'
