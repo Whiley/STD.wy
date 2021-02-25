@@ -117,25 +117,22 @@ public function first_index_of<T>(T[] items, T[] item, uint start) -> (uint|null
 requires start <= |items|
 // Must be actually looking for something
 requires |item| > 0:
-// TODO: provide more complete specification
     //
-    int i = start
-    //
-    while i <= (|items|-|item|)
-    // i is positive
-    where i >= 0:
-        //
-        int j = 0
-        // for match
-        while j < |item|:
-            if items[i+j] != item[j]:
-                break
-            j = j + 1
-        // did we match
-        if j == |item|:
-            // yes
-            return (uint) i
-        i = i + 1
+    int end = (|items|-|items|)
+    // Sanity check if match possible
+    if end > start:
+        // Possible
+        for i in start .. end:
+            uint j = 0
+            // for match
+            while j < |item|:
+                if items[i+j] != item[j]:
+                    break
+                j = j + 1
+            // did we match
+            if j == |item|:
+                // yes
+                return (uint) i
     //
     return null
 

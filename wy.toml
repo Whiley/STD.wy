@@ -4,7 +4,10 @@ authors=["David J. Pearce"]
 version="0.3.1"
 
 [build]
-platforms=["whiley"]
+platforms=["whiley","boogie"]
+
+[build.boogie]
+timeout=240
 
 [check]
 min=-1
