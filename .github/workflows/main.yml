@@ -8,6 +8,6 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Build Project
-        uses: Whiley/WhileyBuildAction@v1
+        uses: Whiley/WhileyBuildAction@v2
         with:
           checking: true
