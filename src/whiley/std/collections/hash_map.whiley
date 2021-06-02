@@ -50,14 +50,14 @@ public function HashMap<T>() -> (HashMap<int,T> r):
 /**
  * Construct empty hash map for boolean keys
  */
-// public function HashMap<T>() -> (HashMap<bool,T> r):
-//     return HashMap<bool,T>(&hash::hash(bool))
+public function HashMap<T>() -> (HashMap<bool,T> r):
+    return HashMap<bool,T>(&hash::hash(bool))
 
 /**
  * Construct empty hash map for string keys
  */
-// public function HashMap<T>() -> (HashMap<string,T> r):
-//     return HashMap<string,T>(&hash::hash(int[]))
+public function HashMap<T>() -> (HashMap<string,T> r):
+    return HashMap<string,T>(&hash::hash(int[]))
 
 /**
  * Construct empty hash map
