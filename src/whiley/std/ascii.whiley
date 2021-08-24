@@ -205,20 +205,21 @@ public function to_string(int item) -> string:
     // Second, determine number of digits.  This is necessary to
     // avoid unnecessary dynamic memory allocatione    
     int tmp = item
-    int digits = 0
+    uint digits = 0
     do:
         tmp = tmp / 10
         digits = digits + 1
-    while tmp != 0
+    while tmp != 0 where digits > 0
     // Finally write digits into resulting string
     string r = ['0';digits]
+    int i = digits
     do:
         int remainder = item % 10
         item = item / 10
         char digit = ('0' + remainder)
-        digits = digits - 1
-        r[digits] = digit
-    while item != 0
+        i = i - 1
+        r[i] = digit
+    while item != 0 && i > 0 where i <= digits && |r| == digits
     //
     if sign:
         return r

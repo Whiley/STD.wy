@@ -87,7 +87,7 @@ ensures x <= |str|:
     //
     uint len = 0
     //
-    for i in 0..|str|:
+    for i in 0..|str| where len <= i:
         byte data = str[i]
         // Check whether have internal byte or not.
         if (data & TRAILING_BYTE_MASK) != data:
