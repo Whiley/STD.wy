@@ -121,7 +121,7 @@ public function to_string(byte b) -> ascii::string:
 public function to_uint(byte b) -> u8:
     u8 r = 0
     uint base = 1
-    while b != 0b:
+    while b != 0b && base <= 128 && r < base:
         if (b & 0b00000001) == 0b00000001:
             r = r + base
         // NOTE: following mask needed in leu of unsigned right shift
