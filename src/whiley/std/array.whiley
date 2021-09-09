@@ -50,7 +50,7 @@ where some { i in start..end | lhs[i] == item }
 
 // Check whether a subsequence is contained with an array
 public property matches<T>(T[] arr, T[] subseq)
-where matches<T>(arr,subseq,0,|arr|)
+where |subseq| <= |arr| && matches<T>(arr,subseq,0,|arr| - |subseq|)
 
 // Check whether a subsequence is contained with an array slice
 public property matches<T>(T[] arr, T[] subseq, int start, int end)
@@ -102,37 +102,41 @@ ensures index is null ==> all { i in start .. |items| | items[i] != item }:
     //
     return null
 
-// find first index after a given start point in list which matches items.
-// If no match, then return null.
+// find first index in list which matches items.  If no match, then return null.
 public function first_index_of<T>(T[] items, T[] item) -> (uint|null index)
 // Must be actually looking for something
-requires |item| > 0:
-    //
-    return first_index_of<T>(items,item,0)
+requires |item| > 0
+// If int returned, sequence from this position matches item
+ensures (index is uint) ==> equals(items,index,item,0,|item|)
+// If null returned, no position matches item in items
+ensures (index == null) ==> all { i in 0.. (|items|-|item|) | !equals(items,i,item,0,|item|) }:
+    // Sanity check
+    if |item| <= |items|:
+        return first_index_of<T>(items,item,0,|items|-|item|)
+    else:
+        return null
 
 // find first index after a given start point in list which matches items.
 // If no match, then return null.
-public function first_index_of<T>(T[] items, T[] item, uint start) -> (uint|null index)
+public function first_index_of<T>(T[] items, T[] item, uint start, uint end) -> (uint|null index)
 // Starting point cannot be beyond array
-requires start <= |items|
+requires start <= end
+// End point cannot be beyond array
+requires end + |item| <= |items|
 // Must be actually looking for something
-requires |item| > 0:
-    //
-    int end = (|items|-|items|)
-    // Sanity check if match possible
-    if end > start:
-        // Possible
-        for i in start .. end:
-            uint j = 0
-            // for match
-            while j < |item|:
-                if items[i+j] != item[j]:
-                    break
-                j = j + 1
-            // did we match
-            if j == |item|:
-                // yes
-                return (uint) i
+requires |item| > 0
+// If int returned, sequence from this position matches item
+ensures (index is uint) ==> equals(items,index,item,0,|item|)
+// If null returned, no position matches item in items
+ensures (index == null) ==> all { i in start .. end | !equals(items,i,item,0,|item|) }:
+    // Possible
+    for i in start .. end
+    // Nothing we've seen so far matches
+    where all { k in start .. i | !equals(items,k,item,0,|item|) }:
+        uint j = 0
+        // for match
+        if equals(items,i,item,0,|item|):
+            return (uint) i
     //
     return null
 
@@ -197,7 +201,9 @@ ensures all { i in 0..|items| | (items[i] == old && contains(items,old,0,i)) ==>
     T[] oldItems = items // ghost
     //
     for i in 0..|items|
-    where |items| == |oldItems|:
+    where |items| == |oldItems|
+    // old not seen so far
+    where !contains(items,old,0,i):
         // look for item
         if oldItems[i] == old:
             // done
@@ -224,6 +230,8 @@ ensures all { i in 0..|items| | first_match(items,old,i) ==> equals(items,i+|old
     uint|null i = first_index_of<T>(items,old)
     // Check whether found
     if i is null:
+        assert all { j in 0 .. |items| - |old| | !equals(items,j,old,0,|old|) }
+        assert !matches(items,old)
         // nothing found
         return items
     else if |old| == |n|:

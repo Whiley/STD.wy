@@ -193,7 +193,7 @@ requires ith >= 0 && ith < vec.length
 // Length of vector reduced by one
 ensures (vec.length - 1) == result.length
 // All items below ith remain unchanged
-ensures array::equals<T>(vec.items,result.items,0,ith)
+ensures array::equals<T>(vec.items,result.items,0,ith):
 // All items that were above ith remain unchanged
 ensures array::equals<T>(vec.items,ith+1,result.items,ith,result.length-ith):
     // Remove item from underlying array
