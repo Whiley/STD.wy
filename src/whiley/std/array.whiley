@@ -319,6 +319,7 @@ ensures |r| == |items|+1:
     //
     for i in 0..|items|
     where |nitems| == |items|+1
+    where nitems[|items|] == item
     where all { k in 0..i | nitems[k] == items[k] }:
         nitems[i] = items[i]
     //
@@ -336,6 +337,7 @@ ensures |r| == |items|+1:
     //
     for i in 0..|items|
     where |nitems| == |items|+1
+    where nitems[0] == item
     where all { k in 0..i | nitems[k+1] == items[k] }:
         nitems[i+1] = items[i]
     //
@@ -355,7 +357,11 @@ ensures all { k in 0..size | result[k] == src[k] }:
     else:
         result = [src[0]; size]
         // copy what we can over
-        for i in 0..size:
+        for i in 0..size
+        // result size unchanged
+        where |result| == size
+        // everything so far is unchanged
+        where all { k in 0..i | result[k] == src[k] }:
             result[i] = src[i]
         //
         return result
@@ -392,16 +398,27 @@ requires (destStart + length) <= |dest|
 // Result is same size as dest
 ensures |result| == |dest|
 // All elements before copied region are same
-ensures all { i in 0 .. destStart | dest[i] == result[i] }
+ensures equals(dest,0,result,0,destStart)
 // All elements in copied region match src
-ensures all { i in 0 .. length | src[i+srcStart] == result[i+destStart] }
+ensures equals(src,srcStart,result,destStart,length)
 // All elements above copied region are same
 ensures all { i in (destStart+length) .. |dest| | dest[i] == result[i] }:
     //
-    int j = destStart
-    int srcEnd = srcStart + length
+    T[] old = dest
+    uint j = destStart
+    uint srcEnd = srcStart + length
     //
-    for i in srcStart .. srcEnd:
+    for i in srcStart .. srcEnd
+    // Size of dest unchanged
+    where |dest| == |old|
+    // Balance i and j
+    where (j - destStart) == (i - srcStart)
+    // Everything below destStart unchanged
+    where equals(old,0,dest,0,destStart)
+    // Everything copied so far is equal
+    where equals(src, srcStart, dest, destStart, i - srcStart)
+    // Everything above j is unchanged
+    where equals(old,dest,j,|dest|):
         dest[j] = src[i]
         j = j + 1
     //
