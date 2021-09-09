@@ -39,7 +39,7 @@ public type HashMap<S,T> is {
     Vector<Pair<S,T> >[] buckets,
     // Hashing function
     hash::fn<S> hasher
-}
+} where |buckets| > 0
 
 /**
  * Construct empty hash map for integer keys
@@ -166,6 +166,9 @@ public function iterator<S,T>(HashMap<S,T> map) -> Iterator<Pair<S,T> >:
 // ====================================================================
 
 private function get<S,T>(HashMap<S,T> map, uint bucket, uint index) -> Option<Pair<S,T> >:
+    // NOTE: following unsafe core required because of limitation with
+    // lambda preconditions in iterator constructor above.   
+    assume bucket >= |map.buckets| || index < vector::size(map.buckets[bucket])
     // Check whether found something
     if bucket < |map.buckets|:
         // Matched an item
@@ -184,12 +187,11 @@ private function next<S,T>(HashMap<S,T> map, uint bucket, uint index) -> Iterato
     }
 
 // Find next valid entry
-private function advance<S,T>(HashMap<S,T> map, uint bucket, uint index) -> (uint b, uint i):
+private function advance<S,T>(HashMap<S,T> map, uint bucket, uint index) -> (uint b, uint i)
+ensures b >= |map.buckets| || i < vector::size(map.buckets[b]):
     if bucket < |map.buckets|:
-        // Extract corresponding bucket
-        Vector<Pair<S,T> > vec = map.buckets[bucket]
         // Check whether found entry
-        if index < vec.length:
+        if index < vector::size(map.buckets[bucket]):
             return (bucket,index)
         else:
             // Use recursion (for now)
