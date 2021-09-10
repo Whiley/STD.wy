@@ -42,7 +42,7 @@ public property equals<T>(T[] l, int l_start, T[] r, int r_start, int length)
 // Arrays must be big enough to hold subrange
 where |l| >= (l_start + length) && |r| >= (r_start + length)
 // All items in subrange match
-where all { i in 0..length | l[l_start+i] == r[r_start+i] }
+where all { k in 0..length | l[l_start+k] == r[r_start+k] }
 
 public property contains<T>(T[] lhs, T item, int start, int end)
 // Some index in given range contains item
@@ -405,22 +405,17 @@ ensures equals(src,srcStart,result,destStart,length)
 ensures all { i in (destStart+length) .. |dest| | dest[i] == result[i] }:
     //
     T[] old = dest
-    uint j = destStart
-    uint srcEnd = srcStart + length
     //
-    for i in srcStart .. srcEnd
+    for i in 0 .. length
     // Size of dest unchanged
     where |dest| == |old|
-    // Balance i and j
-    where (j - destStart) == (i - srcStart)
     // Everything below destStart unchanged
     where equals(old,0,dest,0,destStart)
     // Everything copied so far is equal
-    where equals(src, srcStart, dest, destStart, i - srcStart)
+    where equals(src, srcStart, dest, destStart, i)
     // Everything above j is unchanged
-    where equals(old,dest,j,|dest|):
-        dest[j] = src[i]
-        j = j + 1
+    where equals(old,dest,i+destStart,|dest|):
+        dest[i+destStart] = src[i+srcStart]
     //
     return dest
 
