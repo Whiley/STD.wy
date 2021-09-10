@@ -90,7 +90,7 @@ ensures item == vec.items[ith]:
 /**
  * Convert vector into an array.
  */
-public function to_array<T>(Vector<T> vec) -> (T[] items)
+unsafe public function to_array<T>(Vector<T> vec) -> (T[] items)
 // Size of returned array matches vector size
 ensures |items| == vec.length
 // Ensure returned items match those in vector
@@ -123,7 +123,7 @@ ensures nvec.items[vec.length] == item:
     //
     return vec
 
-public function push_all<T>(Vector<T> vec, T[] items) -> (Vector<T> nvec)
+unsafe public function push_all<T>(Vector<T> vec, T[] items) -> (Vector<T> nvec)
 // Vector size increased by exactly one
 ensures nvec.length == vec.length + |items|
 // Original items unchanged in result
@@ -187,13 +187,13 @@ ensures result.items[ith] == item:
  * Remove the ith element of a vector.  Observe that this takes time
  * linear in the size of the resulting vector.
  */
-public function remove<T>(Vector<T> vec, uint ith) -> (Vector<T> result)
+unsafe public function remove<T>(Vector<T> vec, uint ith) -> (Vector<T> result)
 // Index must be within array bounds
 requires ith >= 0 && ith < vec.length
 // Length of vector reduced by one
 ensures (vec.length - 1) == result.length
 // All items below ith remain unchanged
-ensures array::equals<T>(vec.items,result.items,0,ith):
+ensures array::equals<T>(vec.items,result.items,0,ith)
 // All items that were above ith remain unchanged
 ensures array::equals<T>(vec.items,ith+1,result.items,ith,result.length-ith):
     // Remove item from underlying array

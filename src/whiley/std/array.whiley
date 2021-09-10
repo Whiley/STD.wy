@@ -213,7 +213,7 @@ ensures all { i in 0..|items| | (items[i] == old && contains(items,old,0,i)) ==>
     return items
 
 // replace first occurrence of "old" with "new" in list "items".
-public function replace_first<T>(T[] items, T[] old, T[] n) -> (T[] r)
+unsafe public function replace_first<T>(T[] items, T[] old, T[] n) -> (T[] r)
 // Must actually be replacing something
 requires |old| > 0
 // Length may differ after match
@@ -250,7 +250,7 @@ ensures all { i in 0..|items| | first_match(items,old,i) ==> equals(items,i+|old
         return copy<T>(items,i+|old|,nitems,i+|n|,remainder)
 
 // replace all occurrences of "old" with "new" in list "items".
-public function replace_all<T>(T[] items, T[] old, T[] n) -> (T[] r)
+unsafe public function replace_all<T>(T[] items, T[] old, T[] n) -> (T[] r)
 // must have something to replace
 requires |old| > 0:
     //
@@ -262,7 +262,7 @@ requires |old| > 0:
     return items
 
 // replace occurrences of "old" with corresponding occurences in order
-public function replace<T>(T[] items, T[] old, T[][] nn) -> (T[] r)
+unsafe public function replace<T>(T[] items, T[] old, T[][] nn) -> (T[] r)
 // must have something to replace
 requires |old| > 0:
     // NOTE: this is an horifically poor implementation which obviously
@@ -277,7 +277,7 @@ requires |old| > 0:
 
 
 // Extract slice of items array between start and up to (but not including) end.
-public function slice<T>(T[] items, uint start, uint end) -> (T[] r)
+unsafe public function slice<T>(T[] items, uint start, uint end) -> (T[] r)
 // Given region to slice must make sense
 requires start <= end && end <= |items|
 // Size of slice determined by difference between start and end
@@ -291,7 +291,7 @@ ensures all { i in 0..|r| | items[i+start] == r[i] }:
         T[] nitems = [items[0]; end-start]
         return copy(items,start,nitems,0,|nitems|)
 
-public function append<T>(T[] lhs, T[] rhs) -> (T[] r)
+unsafe public function append<T>(T[] lhs, T[] rhs) -> (T[] r)
 // Resulting array exactly size of s1 and s2 together 
 ensures |r| == |lhs| + |rhs|
 // Elements of lhs are stored first in result
@@ -390,7 +390,7 @@ ensures (|items| > size) ==> all { k in 0..size | result[k] == items[k] }:
     //
     return nitems
 
-public function copy<T>(T[] src, uint srcStart, T[] dest, uint destStart, uint length) -> (T[] result)
+unsafe public function copy<T>(T[] src, uint srcStart, T[] dest, uint destStart, uint length) -> (T[] result)
 // Source array must contain enough elements to be copied
 requires (srcStart + length) <= |src|
 // Destination array must have enough space for copied elements
@@ -429,7 +429,7 @@ ensures all { i in (destStart+length) .. |dest| | dest[i] == result[i] }:
  * down.  Thus, the resulting array is one element smaller than the
  * original.
  */
-public function remove<T>(T[] src, uint ith) -> (T[] result)
+unsafe public function remove<T>(T[] src, uint ith) -> (T[] result)
 // Element to be removed must be within bounds
 requires ith < |src|
 // Resulting array has one less element
@@ -473,7 +473,7 @@ ensures src[ith] == result[jth] && src[jth] == result[ith]:
 // ===================================================================
 
 // Map all items in a given array from one type to another.
-public function map<S,T>(S[] items, function(S)->(T) fn) -> (T[] r)
+unsafe public function map<S,T>(S[] items, function(S)->(T) fn) -> (T[] r)
 // Resulting array same size as original
 ensures |items| == |r|
 // All items are properly mapped
@@ -491,7 +491,7 @@ ensures all { i in 0..|items| | r[i] == fn(items[i]) }:
         return nitems
 
 // Eliminate all elements which fail to match a given filter predicate
-public function filter<T>(T[] items, function(T)->(bool) fn) -> (T[] r)
+unsafe public function filter<T>(T[] items, function(T)->(bool) fn) -> (T[] r)
 // Resulting array not bigger than original
 ensures |items| >= |r|
 // Filter predicate holds for all returned items
