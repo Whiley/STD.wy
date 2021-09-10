@@ -468,7 +468,7 @@ ensures src[ith] == result[jth] && src[jth] == result[ith]:
 // ===================================================================
 
 // Map all items in a given array from one type to another.
-unsafe public function map<S,T>(S[] items, function(S)->(T) fn) -> (T[] r)
+public function map<S,T>(S[] items, function(S)->(T) fn) -> (T[] r)
 // Resulting array same size as original
 ensures |items| == |r|
 // All items are properly mapped
@@ -480,7 +480,11 @@ ensures all { i in 0..|items| | r[i] == fn(items[i]) }:
         // Initialise first element
         T[] nitems = [fn(items[0]);|items|]
         // Assign remainder
-        for i in 1 .. |nitems|:
+        for i in 1 .. |nitems|
+        // Size of nitems unchanged
+        where |nitems| == |items|
+        // Everything so far has been mapped
+        where all { k in 0..i | nitems[k] == fn(items[k]) }:
             nitems[i] = fn(items[i])
         // Done
         return nitems
