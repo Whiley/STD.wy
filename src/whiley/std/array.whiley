@@ -490,7 +490,7 @@ ensures all { i in 0..|items| | r[i] == fn(items[i]) }:
         return nitems
 
 // Eliminate all elements which fail to match a given filter predicate
-unsafe public function filter<T>(T[] items, function(T)->(bool) fn) -> (T[] r)
+public function filter<T>(T[] items, function(T)->(bool) fn) -> (T[] r)
 // Resulting array not bigger than original
 ensures |items| >= |r|
 // Filter predicate holds for all returned items
@@ -500,7 +500,9 @@ ensures all { i in 0..|r| | fn(r[i]) }:
     uint j = 0
     for i in 0..|items|
     // size of array doesn't change
-    where |items| == len && j <= i:
+    where |items| == len && j <= i
+    // Everything in items upto j matches
+    where all { k in 0..j | fn(items[k]) }:
         if fn(items[i]):
             items[j] = items[i]
             j = j + 1
