@@ -193,7 +193,7 @@ public function is_digit(char c) -> bool:
 public function is_whitespace(char c) -> bool:
     return c == ' ' || c == '\t' || c == '\n' || c == '\r'
 
-unsafe public function to_string(int item) -> string:
+public function to_string(int item) -> string:
     //
     bool sign
     // First, normalise item and record sign
@@ -230,7 +230,7 @@ unsafe public function to_string(int item) -> string:
 /**
  * Convert an array of integers into an ASCII String.
  */
-unsafe public function to_string(int[] items) -> string:
+public function to_string(int[] items) -> string:
     string r = ""
     // Convert each item in array to string
     for i in 0..|items|:

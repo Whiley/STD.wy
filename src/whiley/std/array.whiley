@@ -168,11 +168,11 @@ ensures index is null ==> all { i in 0 .. |items| | items[i] != item }:
 // ===================================================================
 
 // replace all occurrences of "old" with "new" in list "items".
-public function replace_all<T>(T[] items, T old, T n) -> (T[] r)
-// Every position in items matching old replaced with n
-ensures all { i in 0..|items| | (items[i] == old) ==> r[i] == n }
+public function replace_all<T>(T[] items, T o, T n) -> (T[] r)
+// Every position in items matching o replaced with n
+ensures all { i in 0..|items| | (items[i] == o) ==> r[i] == n }
 // Every other position remains the same
-ensures all { i in 0..|items| | (items[i] != old) ==> r[i] == items[i] }
+ensures all { i in 0..|items| | (items[i] != o) ==> r[i] == items[i] }
 // Size of resulting array remains the same
 ensures |items| == |r|:
     //
@@ -180,32 +180,32 @@ ensures |items| == |r|:
     //
     for i in 0..|items|
     where |items| == |oldItems|
-    where all { k in 0..i | (oldItems[k] == old) ==> (items[k] == n) }
-    where all { k in 0..|items| | (oldItems[k] != old) ==> (items[k] == oldItems[k]) }:
-        if oldItems[i] == old:
+    where all { k in 0..i | (oldItems[k] == o) ==> (items[k] == n) }
+    where all { k in 0..|items| | (oldItems[k] != o) ==> (items[k] == oldItems[k]) }:
+        if oldItems[i] == o:
             items[i] = n
     //
     return items
 
 // replace first occurrence of "old" with "new" in list "items".
-public function replace_first<T>(T[] items, T old, T n) -> (T[] r)
+public function replace_first<T>(T[] items, T o, T n) -> (T[] r)
 // Size of resulting array remains the same
 ensures |items| == |r|
 // Can only replace old with new
-ensures all { i in 0..|items| | items[i] == r[i] || (items[i] == old && r[i] == n) }
+ensures all { i in 0..|items| | items[i] == r[i] || (items[i] == o && r[i] == n) }
 // Must replace first match of old
-ensures all { i in 0..|items| | (items[i] == old && !contains(items,old,0,i)) ==> r[i] == n }
+ensures all { i in 0..|items| | (items[i] == o && !contains(items,o,0,i)) ==> r[i] == n }
 // Must not replace any other matches
-ensures all { i in 0..|items| | (items[i] == old && contains(items,old,0,i)) ==> r[i] == old }:
+ensures all { i in 0..|items| | (items[i] == o && contains(items,o,0,i)) ==> r[i] == o }:
     //
     T[] oldItems = items // ghost
     //
     for i in 0..|items|
     where |items| == |oldItems|
     // old not seen so far
-    where !contains(items,old,0,i):
+    where !contains(items,o,0,i):
         // look for item
-        if oldItems[i] == old:
+        if oldItems[i] == o:
             // done
             items[i] = n
             return items
@@ -213,71 +213,71 @@ ensures all { i in 0..|items| | (items[i] == old && contains(items,old,0,i)) ==>
     return items
 
 // replace first occurrence of "old" with "new" in list "items".
-unsafe public function replace_first<T>(T[] items, T[] old, T[] n) -> (T[] r)
+unsafe public function replace_first<T>(T[] items, T[] o, T[] n) -> (T[] r)
 // Must actually be replacing something
-requires |old| > 0
+requires |o| > 0
 // Length may differ after match
-ensures matches(items,old) ==> (|r| + |old|) == (|items| + |n|)
+ensures matches(items,o) ==> (|r| + |o|) == (|items| + |n|)
 // Length doesn't differ if no match
-ensures !matches(items,old) ==> (|r| == |items|)
+ensures !matches(items,o) ==> (|r| == |items|)
 // First match always replaced
-ensures all { i in 0..|items| | first_match(items,old,i) ==> equals(r,i,n,0,|n|) }
+ensures all { i in 0..|items| | first_match(items,o,i) ==> equals(r,i,n,0,|n|) }
 // Items below first match are retained
-ensures all { i in 0..|items| | first_match(items,old,i) ==> equals(items,0,r,0,i) }
+ensures all { i in 0..|items| | first_match(items,o,i) ==> equals(items,0,r,0,i) }
 // Items above first match are retained
-ensures all { i in 0..|items| | first_match(items,old,i) ==> equals(items,i+|old|,r,i+|n|,|items| - (i+|old|)) }:
+ensures all { i in 0..|items| | first_match(items,o,i) ==> equals(items,i+|o|,r,i+|n|,|items| - (i+|o|)) }:
     // Look for match
-    uint|null i = first_index_of<T>(items,old)
+    uint|null i = first_index_of<T>(items,o)
     // Check whether found
     if i is null:
-        assert all { j in 0 .. |items| - |old| | !equals(items,j,old,0,|old|) }
-        assert !matches(items,old)
+        assert all { j in 0 .. |items| - |o| | !equals(items,j,o,0,|o|) }
+        assert !matches(items,o)
         // nothing found
         return items
-    else if |old| == |n|:
+    else if |o| == |n|:
         // easy case, can perform in place
-        return copy(n,0,items,i,|old|)
+        return copy(n,0,items,i,|o|)
     else:        
         // hard case, must resize array
-        uint size = (|items| - |old|) + |n|
+        uint size = (|items| - |o|) + |n|
         // Resize with temporary fill
-        T[] nitems = resize<T>(items,size,old[0])
+        T[] nitems = resize<T>(items,size,o[0])
         // copy new over old
         nitems = copy<T>(n,0,nitems,i,|n|)
         // Calculate size of remainder
         uint remainder = size - i - |n|
         // copy remainder back
-        return copy<T>(items,i+|old|,nitems,i+|n|,remainder)
+        return copy<T>(items,i+|o|,nitems,i+|n|,remainder)
 
 // replace all occurrences of "old" with "new" in list "items".
-unsafe public function replace_all<T>(T[] items, T[] old, T[] n) -> (T[] r)
+public function replace_all<T>(T[] items, T[] o, T[] n) -> (T[] r)
 // must have something to replace
-requires |old| > 0:
+requires |o| > 0:
     //
     // NOTE: this is an horifically poor implementation which obviously
     // needs updating at some point.    
-    while first_index_of<T>(items,old) != null:
-        items = replace_first<T>(items,old,n)
+    while first_index_of<T>(items,o) != null:
+        items = replace_first<T>(items,o,n)
     //
     return items
 
 // replace occurrences of "old" with corresponding occurences in order
-unsafe public function replace<T>(T[] items, T[] old, T[][] nn) -> (T[] r)
+unsafe public function replace<T>(T[] items, T[] o, T[][] nn) -> (T[] r)
 // must have something to replace
-requires |old| > 0:
+requires |o| > 0:
     // NOTE: this is an horifically poor implementation which obviously
     // needs updating at some point.    
     int i = 0
     //
-    while i < |nn| && first_index_of<T>(items,old) != null:
-        items = replace_first<T>(items,old,nn[i])
+    while i < |nn| && first_index_of<T>(items,o) != null:
+        items = replace_first<T>(items,o,nn[i])
         i = i + 1
     //
     return items
 
 
 // Extract slice of items array between start and up to (but not including) end.
-unsafe public function slice<T>(T[] items, uint start, uint end) -> (T[] r)
+public function slice<T>(T[] items, uint start, uint end) -> (T[] r)
 // Given region to slice must make sense
 requires start <= end && end <= |items|
 // Size of slice determined by difference between start and end
@@ -291,7 +291,7 @@ ensures all { i in 0..|r| | items[i+start] == r[i] }:
         T[] nitems = [items[0]; end-start]
         return copy(items,start,nitems,0,|nitems|)
 
-unsafe public function append<T>(T[] lhs, T[] rhs) -> (T[] r)
+public function append<T>(T[] lhs, T[] rhs) -> (T[] r)
 // Resulting array exactly size of s1 and s2 together 
 ensures |r| == |lhs| + |rhs|
 // Elements of lhs are stored first in result
@@ -404,17 +404,17 @@ ensures equals(src,srcStart,result,destStart,length)
 // All elements above copied region are same
 ensures all { i in (destStart+length) .. |dest| | dest[i] == result[i] }:
     //
-    T[] old = dest
+    T[] _dest = dest
     //
     for i in 0 .. length
     // Size of dest unchanged
-    where |dest| == |old|
+    where |dest| == |_dest|
     // Everything below destStart unchanged
-    where equals(old,0,dest,0,destStart)
+    where equals(_dest,0,dest,0,destStart)
     // Everything copied so far is equal
     where equals(src, srcStart, dest, destStart, i)
     // Everything above j is unchanged
-    where equals(old,dest,i+destStart,|dest|):
+    where equals(_dest,dest,i+destStart,|dest|):
         dest[i+destStart] = src[i+srcStart]
     //
     return dest
@@ -424,7 +424,7 @@ ensures all { i in (destStart+length) .. |dest| | dest[i] == result[i] }:
  * down.  Thus, the resulting array is one element smaller than the
  * original.
  */
-unsafe public function remove<T>(T[] src, uint ith) -> (T[] result)
+public function remove<T>(T[] src, uint ith) -> (T[] result)
 // Element to be removed must be within bounds
 requires ith < |src|
 // Resulting array has one less element

@@ -90,7 +90,7 @@ ensures item == vec.items[ith]:
 /**
  * Convert vector into an array.
  */
-unsafe public function to_array<T>(Vector<T> vec) -> (T[] items)
+public function to_array<T>(Vector<T> vec) -> (T[] items)
 // Size of returned array matches vector size
 ensures |items| == vec.length
 // Ensure returned items match those in vector
@@ -123,7 +123,7 @@ ensures nvec.items[vec.length] == item:
     //
     return vec
 
-unsafe public function push_all<T>(Vector<T> vec, T[] items) -> (Vector<T> nvec)
+public function push_all<T>(Vector<T> vec, T[] items) -> (Vector<T> nvec)
 // Vector size increased by exactly one
 ensures nvec.length == vec.length + |items|
 // Original items unchanged in result
