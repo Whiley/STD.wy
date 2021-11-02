@@ -89,13 +89,13 @@ requires start <= |items|
 // If int returned, element at this position matches item
 ensures index is uint ==> items[index] == item
 // If int returned, element at this position is first match
-ensures index is uint ==> all { i in start .. index | items[i] != item }
+ensures index is uint ==> !contains(items,item,start,index)
 // If null returned, no element in items matches item
-ensures index is null ==> all { i in start .. |items| | items[i] != item }:
+ensures index is null ==> !contains(items,item,start,|items|):
     //
     for i in start .. |items|
     // No element seen so far matches item
-    where all { j in start .. i | items[j] != item }:
+    where !contains(items,item,start,i):
         //
         if items[i] == item:
             return (uint) i
