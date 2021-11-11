@@ -262,12 +262,12 @@ requires |o| > 0:
     return items
 
 // replace occurrences of "old" with corresponding occurences in order
-unsafe public function replace<T>(T[] items, T[] o, T[][] nn) -> (T[] r)
+public function replace<T>(T[] items, T[] o, T[][] nn) -> (T[] r)
 // must have something to replace
 requires |o| > 0:
     // NOTE: this is an horifically poor implementation which obviously
     // needs updating at some point.    
-    int i = 0
+    uint i = 0
     //
     while i < |nn| && first_index_of<T>(items,o) != null:
         items = replace_first<T>(items,o,nn[i])
@@ -390,7 +390,7 @@ ensures (|items| > size) ==> all { k in 0..size | result[k] == items[k] }:
     //
     return nitems
 
-unsafe public function copy<T>(T[] src, uint srcStart, T[] dest, uint destStart, uint length) -> (T[] result)
+public function copy<T>(T[] src, uint srcStart, T[] dest, uint destStart, uint length) -> (T[] result)
 // Source array must contain enough elements to be copied
 requires (srcStart + length) <= |src|
 // Destination array must have enough space for copied elements
@@ -412,9 +412,11 @@ ensures all { i in (destStart+length) .. |dest| | dest[i] == result[i] }:
     // Everything below destStart unchanged
     where equals(_dest,0,dest,0,destStart)
     // Everything copied so far is equal
-    where equals(src, srcStart, dest, destStart, i)
+    where all { k in srcStart .. (srcStart+i) | src[k] == dest[(k-srcStart)+destStart] }    
+    // where equals(src, srcStart, dest, destStart, i)
     // Everything above j is unchanged
-    where equals(_dest,dest,i+destStart,|dest|):
+    // where equals(_dest,dest,i+destStart,|dest|):
+    where all { k in i+destStart .. |dest| | _dest[k] == dest[k] }:    
         dest[i+destStart] = src[i+srcStart]
     //
     return dest
