@@ -76,6 +76,10 @@ requires n <= m
 requires equals<T>(l,i,r,j,m)
 ensures equals<T>(l,i,r,j,n)
 
+native public function lemma_matches<T>(T[] arr, T[] subseq, uint i)
+requires equals<T>(arr,i,subseq,0,|subseq|)
+ensures matches<T>(arr,subseq)
+    
 // ===================================================================
 // Queries
 // ===================================================================
@@ -120,7 +124,7 @@ requires |item| > 0
 // If int returned, sequence from this position matches item
 ensures (index is uint) ==> equals(items,index,item,0,|item|)
 // If null returned, no position matches item in items
-ensures (index == null) ==> all { i in 0.. (|items|-|item|) | !equals(items,i,item,0,|item|) }:
+ensures (index is null) ==> all { i in 0.. (|items|-|item|) | !equals(items,i,item,0,|item|) }:
     // Sanity check
     if |item| <= |items|:
         return first_index_of<T>(items,item,0,|items|-|item|)
@@ -232,7 +236,7 @@ ensures matches(items,o) ==> (|r| + |o|) == (|items| + |n|)
 // Length doesn't differ if no match
 ensures !matches(items,o) ==> (|r| == |items|)
 // First match always replaced
-ensures all { i in 0..|items| | first_match(items,o,i) ==> equals(r,i,n,0,|n|) }
+ensures all { i in 0 .. (|items|-|o|) | first_match(items,o,i) ==> equals(r,i,n,0,|n|) }
 // Items below first match are retained
 ensures all { i in 0..|items| | first_match(items,o,i) ==> equals(items,0,r,0,i) }
 // Items above first match are retained
@@ -242,13 +246,15 @@ ensures all { i in 0..|items| | first_match(items,o,i) ==> equals(items,i+|o|,r,
     // Check whether found
     if i is null:
         assert all { j in 0 .. |items| - |o| | !equals(items,j,o,0,|o|) }
+        assert all { j in 0 .. |items| - |o| | !first_match(items,o,j) }
         assert !matches(items,o)
         // nothing found
         return items
     else if |o| == |n|:
         // easy case, can perform in place
         return copy(n,0,items,i,|o|)
-    else:        
+    else:
+        lemma_matches<T>(items,o,i)
         // hard case, must resize array
         uint size = (|items| - |o|) + |n|
         // Resize with temporary fill
