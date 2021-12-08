@@ -128,26 +128,26 @@ ensures r.length >= map.length:
     // Done
     return map
 
-// public function to_array<S,T>(HashMap<S,T> map) -> (Pair<S,T>[] result)
-// // Resulting array has same items as map
-// ensures |result| == map.length:
-//     // Find first value
-//     (uint b, uint i) = advance<S,T>(map,0,0)
-//     // Check whether anything found
-//     if b >= |map.buckets|:
-//         return []
-//     else:
-//         // Extract first item
-//         Pair<S,T> first = vector::get(map.buckets[b],i)
-//         // Construct resulting array
-//         Pair<S,T>[] items = [first; map.length]
-//         // Iterate remaining items
-//         for j in 1 .. |items|:
-//             // Find ith item
-//             (b,i) = advance<S,T>(map,b,i+1)
-//             items[j] = vector::get(map.buckets[b],i)            
-//         // Done
-//         return items
+unsafe public function to_array<S,T>(HashMap<S,T> map) -> (Pair<S,T>[] result)
+// Resulting array has same items as map
+ensures |result| == map.length:
+    // Find first value
+    (uint b, uint i) = advance<S,T>(map,0,0)
+    // Check whether anything found
+    if b >= |map.buckets|:
+        return []
+    else:
+        // Extract first item
+        Pair<S,T> first = vector::get(map.buckets[b],i)
+        // Construct resulting array
+        Pair<S,T>[] items = [first; map.length]
+        // Iterate remaining items
+        for j in 1 .. |items|:
+            // Find ith item
+            (b,i) = advance<S,T>(map,b,i+1)
+            items[j] = vector::get(map.buckets[b],i)            
+        // Done
+        return items
 
 /**
  * Get an iterator over the key/value pairs held in this map
@@ -188,6 +188,7 @@ private function next<S,T>(HashMap<S,T> map, uint bucket, uint index) -> Iterato
 
 // Find next valid entry
 private function advance<S,T>(HashMap<S,T> map, uint bucket, uint index) -> (uint b, uint i)
+// Either nothing left, or a valid bucket index
 ensures b >= |map.buckets| || i < vector::size(map.buckets[b]):
     if bucket < |map.buckets|:
         // Check whether found entry
