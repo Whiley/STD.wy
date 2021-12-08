@@ -66,6 +66,17 @@ public property unique_elements<T>(T[] items, int end) -> (bool r):
     all { i in 0..end, j in (i+1)..end | items[i] != items[j] }
 
 // ===================================================================
+// Lemmas
+// ===================================================================
+
+// A simple lemma which establishes that, if two arrays are equal for
+// a given range, then they are also equal for subranges.
+native public function lemma_equals<T>(T[] l, uint i, T[] r, uint j, uint n, uint m)
+requires n <= m
+requires equals<T>(l,i,r,j,m)
+ensures equals<T>(l,i,r,j,n)
+
+// ===================================================================
 // Queries
 // ===================================================================
 

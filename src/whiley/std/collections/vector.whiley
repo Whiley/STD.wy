@@ -187,7 +187,7 @@ ensures result.items[ith] == item:
  * Remove the ith element of a vector.  Observe that this takes time
  * linear in the size of the resulting vector.
  */
-unsafe public function remove<T>(Vector<T> vec, uint ith) -> (Vector<T> result)
+public function remove<T>(Vector<T> vec, uint ith) -> (Vector<T> result)
 // Index must be within array bounds
 requires ith >= 0 && ith < vec.length
 // Length of vector reduced by one
@@ -198,8 +198,12 @@ ensures array::equals<T>(vec.items,result.items,0,ith)
 ensures array::equals<T>(vec.items,ith+1,result.items,ith,result.length-ith):
     // Remove item from underlying array
     T[] items = array::remove<T>(vec.items,ith)
+    // Calculate new vector length
+    uint len = vec.length - 1
+    // Lemma required!!
+    array::lemma_equals<T>(vec.items,ith+1,items, ith, len - ith, |items| - ith)
     // Done
-    return { items: items, length: vec.length - 1 }
+    return { items: items, length: len }
 
 /**
  * Swap two items (which may be the same) in a vector.  The resulting
