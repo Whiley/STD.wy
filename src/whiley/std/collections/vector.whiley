@@ -233,8 +233,8 @@ ensures r.length == 0:
 /**
  * Equality of vectors
  */
-public property equals<T>(Vector<T> lhs, Vector<T> rhs)
-// Vector lengths must be equal
-where (lhs.length == rhs.length)
-// Visible vector elements must be equal
-where array::equals<T>(lhs.items,rhs.items,0,lhs.length)
+public property equals<T>(Vector<T> lhs, Vector<T> rhs) -> (bool r):
+    // Vector lengths must be equal
+    (lhs.length == rhs.length) &&
+    // Visible vector elements must be equal
+    array::equals<T>(lhs.items,rhs.items,0,lhs.length)
