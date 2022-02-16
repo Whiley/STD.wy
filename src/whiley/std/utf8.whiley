@@ -61,24 +61,24 @@ where all { i in 0..|chars| | valid_4th_byte(chars, (uint) i) }
 
 // Identifies a UTF-8 code point that occupies one byte.  These
 // characters corresponding directly to the ASCII character set.
-public byte ONE_BYTE_MASK = 0b01111111
+public final byte ONE_BYTE_MASK = 0b01111111
 
 // Identifies a UTF-8 code point that occupies two bytes, where the
 // following byte conforms to the trailing byte mask.
-public byte TWO_BYTE_MASK = 0b11011111
+public final byte TWO_BYTE_MASK = 0b11011111
 
 // Identifies a UTF-8 code point that occupies three bytes, where the
 // following bytes conform to the trailing byte mask.
-public byte THREE_BYTE_MASK = 0b11101111
+public final byte THREE_BYTE_MASK = 0b11101111
 
 // Identifies a UTF-8 code point that occupies four bytes, where the
 // following bytes conform to the trailing byte mask.
-public byte FOUR_BYTE_MASK = 0b11110111
+public final byte FOUR_BYTE_MASK = 0b11110111
 
 // Identifies an internal byte for a UTF-8 code point.  Unfortunately,
 // the mask does not tell us whether we are part of a two-, three- or
 // four-byte code point.
-public byte TRAILING_BYTE_MASK = 0b10111111
+public final byte TRAILING_BYTE_MASK = 0b10111111
 
 // Returns the length of a given utf8 string.  That is, the number of
 // code points defined in the string.  This may be less than the

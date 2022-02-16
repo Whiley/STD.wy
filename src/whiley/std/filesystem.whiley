@@ -61,8 +61,8 @@ public type File is  {
     method available() -> uint
 }
 
-public int READONLY = 0
-public int READWRITE = 1
+public final int READONLY = 0
+public final int READWRITE = 1
 
 public type rwMode is (int x) where (x == READONLY) || (x == READWRITE)
 

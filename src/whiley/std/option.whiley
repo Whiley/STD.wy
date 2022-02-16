@@ -44,7 +44,7 @@ public type Option<T> is None | Some<T>
 /**
  * Static value for None
  */
-public None None = null
+public final None None = null
 
 /**
  * Constructor for Some values.
