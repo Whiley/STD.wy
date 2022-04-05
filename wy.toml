@@ -5,6 +5,7 @@ version="0.3.2"
 
 [build]
 platforms=["whiley","boogie"]
+library=true
 
 [build.boogie]
 timeout=240
