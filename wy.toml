@@ -5,7 +5,6 @@ version="0.3.2"
 
 [build]
 platforms=["whiley","boogie"]
-library=true
 
 [build.boogie]
 timeout=240
@@ -20,3 +19,4 @@ depth=1
 source="src/whiley"
 target="bin/wyil"
 verify=false
+library=true
