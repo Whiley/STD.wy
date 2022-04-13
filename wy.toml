@@ -19,4 +19,3 @@ depth=1
 source="src/whiley"
 target="bin/wyil"
 verify=false
-library=true
