@@ -46,19 +46,19 @@ public property is_start_n(byte data, uint len) -> (bool r):
       return false
 
 public property valid_2nd_byte(byte[] chars, uint i) -> (bool r):
-    if i > 0 && is_internal(chars[i]):
+    if i > 0 && i < |chars| && is_internal(chars[i]):
       return is_start_n(chars[i-1],2)
     else:
       return false
 
 public property valid_3rd_byte(byte[] chars, uint i) -> (bool r):
-    if i > 1 && is_internal(chars[i]):
+    if i > 1 && i < |chars| && is_internal(chars[i]):
        return is_start_n(chars[i-2],3)
     else:
        return false
 
 public property valid_4th_byte(byte[] chars, uint i) -> (bool r):
-    if i > 2 && is_internal(chars[i]):
+    if i > 2 && i < |chars| && is_internal(chars[i]):
        return is_start_n(chars[i-2],4)
     else:
        return false

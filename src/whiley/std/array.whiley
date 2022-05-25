@@ -128,7 +128,7 @@ requires |item| > 0
 // If int returned, sequence from this position matches item
 ensures (index is uint) ==> equals(items,index,item,0,|item|)
 // If null returned, no position matches item in items
-ensures (index is null) ==> all { i in 0.. (|items|-|item|) | !equals(items,i,item,0,|item|) }:
+ensures (index is null) ==> (|item| > |items| || all { i in 0.. (|items|-|item|) | !equals(items,i,item,0,|item|) }):
     // Sanity check
     if |item| <= |items|:
         return first_index_of<T>(items,item,0,|items|-|item|)
