@@ -9,44 +9,59 @@ public type char is (int c) where 0 <= c && c <= 1112064
 // Identifies where a given byte is internal to code point or not.
 // Specifically, whether or not it conforms to the TRAILING_BYTE_MASK
 public property is_internal(byte data) -> (bool r):
-    (data & TRAILING_BYTE_MASK) == data
+    return (data & TRAILING_BYTE_MASK) == data
 
 // Identifies whether a given byte is the start of a one-byte code
 // point.  That is, whether or not it conforms to the ONE_BYTE_MASK.
 public property is_start_one(byte data) -> (bool r):
-    (data & ONE_BYTE_MASK) == data
+    return (data & ONE_BYTE_MASK) == data
 
 // Identifies whether a given byte is the start of a two-byte code
 // point.  That is, whether or not it conforms to the TWO_BYTE_MASK.
 public property is_start_two(byte data) -> (bool r):
-    (data & TWO_BYTE_MASK) == data
+    return (data & TWO_BYTE_MASK) == data
 
 // Identifies whether a given byte is the start of a three-byte code
 // point.  That is, whether or not it conforms to the THREE_BYTE_MASK.
 public property is_start_three(byte data) -> (bool r):
-    (data & THREE_BYTE_MASK) == data
+    return (data & THREE_BYTE_MASK) == data
 
 // Identifies whether a given byte is the start of a four-byte code
 // point.  That is, whether or not it conforms to the FOUR_BYTE_MASK.
 public property is_start_four(byte data) -> (bool r):
-    (data & THREE_BYTE_MASK) == data
+    return (data & THREE_BYTE_MASK) == data
 
 // Identifies whether a given byte is the start of a code byte
 // containing *at least* n bytes.
 public property is_start_n(byte data, uint len) -> (bool r):
-    (is_start_one(data) && len == 1) ||
-    (is_start_two(data) && len >= 2) ||
-    (is_start_three(data) && len >= 3) ||
-    (is_start_four(data) && len >= 4)
+    if is_start_one(data):
+      return len == 1
+    else if is_start_two(data):
+      return len >= 2
+    else if is_start_three(data):
+      return len >= 3
+    else if is_start_four(data):
+      return len >= 4
+    else:
+      return false
 
 public property valid_2nd_byte(byte[] chars, uint i) -> (bool r):
-    (i > 0 && is_internal(chars[i])) ==> is_start_n(chars[i-1],2)
+    if i > 0 && is_internal(chars[i]):
+      return is_start_n(chars[i-1],2)
+    else:
+      return false
 
 public property valid_3rd_byte(byte[] chars, uint i) -> (bool r):
-    (i > 1 && is_internal(chars[i])) ==> is_start_n(chars[i-2],3)
+    if i > 1 && is_internal(chars[i]):
+       return is_start_n(chars[i-2],3)
+    else:
+       return false
 
 public property valid_4th_byte(byte[] chars, uint i) -> (bool r):
-    (i > 2 && is_internal(chars[i])) ==> is_start_n(chars[i-2],4)
+    if i > 2 && is_internal(chars[i]):
+       return is_start_n(chars[i-2],4)
+    else:
+       return false
 
 // A UTF-8 string is a sequence of zero or more bytes with additional
 // constraints.  For example, the final byte cannot conform to the

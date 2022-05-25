@@ -31,39 +31,43 @@ import uint from std::integer
 // ===================================================================
 
 // Check if two arrays equal for a given subrange
-public property equals<T>(T[] lhs, T[] rhs, int start, int end) -> (bool r):
+public property equals<T>(T[] lhs, T[] rhs, uint start, int end) -> (bool r):
     // Arrays must be big enough to hold subrange
-    |lhs| >= end && |rhs| >= end &&
-    // All items in subrange match
-    all { i in start..end | lhs[i] == rhs[i] }
+    return |lhs| >= end && |rhs| >= end && start <= end &&
+           // All items in subrange match
+           all { i in start..end | lhs[i] == rhs[i] }
 
 // Check if two array subranges are equal
 public property equals<T>(T[] l, int l_start, T[] r, int r_start, int length) -> bool:
-    // Arrays must be big enough to hold subrange
-    |l| >= (l_start + length) && |r| >= (r_start + length) &&
-    // All items in subrange match
-    all { k in 0..length | l[l_start+k] == r[r_start+k] }
+    return length >= 0 && l_start >= 0 && r_start >= 0 &&
+           // Arrays must be big enough to hold subrange
+           |l| >= (l_start + length) && |r| >= (r_start + length) && length >= 0 &&
+           // All items in subrange match
+           all { k in 0..length | l[l_start+k] == r[r_start+k] }
 
 public property contains<T>(T[] lhs, T item, int start, int end) -> (bool r):
-    // Some index in given range contains item
-    some { i in start..end | lhs[i] == item }
+    return 0 <= start && start <= end && end <= |lhs| &&
+           // Some index in given range contains item
+           some { i in start..end | lhs[i] == item }
 
 // Check whether a subsequence is contained with an array
 public property matches<T>(T[] arr, T[] subseq) -> (bool r):
-    |subseq| <= |arr| && matches<T>(arr,subseq,0,|arr| - |subseq|)
+    return |subseq| <= |arr| && matches<T>(arr,subseq,0,|arr| - |subseq|)
 
 // Check whether a subsequence is contained with an array slice
 public property matches<T>(T[] arr, T[] subseq, int start, int end) -> (bool r):
-    some { i in start..end | equals(arr,i,subseq,0,|subseq|) }
+    return 0 <= start && start <= end && end <= |arr| &&
+           some { i in start..end | equals(arr,i,subseq,0,|subseq|) }
 
 // Check whether a given index is the first match of a subsequence
 public property first_match<T>(T[] arr, T[] subseq, int index) -> (bool r):
-    equals(arr,index,subseq,0,|subseq|) && !matches<T>(arr,subseq,0,index)
+    return equals(arr,index,subseq,0,|subseq|) && !matches<T>(arr,subseq,0,index)
 
 // Ensure all elements in an array (upto a given point) are unique
 public property unique_elements<T>(T[] items, int end) -> (bool r):
-    // All items upto end are unique
-    all { i in 0..end, j in (i+1)..end | items[i] != items[j] }
+    return 0 <= end && end <= |items| &&
+       // All items upto end are unique
+       all { i in 0..end, j in (i+1)..end | items[i] != items[j] }
 
 // ===================================================================
 // Lemmas
