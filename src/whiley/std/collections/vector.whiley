@@ -25,7 +25,7 @@
 package std::collections
 
 import std::array
-import uint from std::integer
+import uint from std::int
 
 public type Vector<T> is {
     T[] items,

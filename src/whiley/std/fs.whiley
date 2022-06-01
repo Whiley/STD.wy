@@ -29,10 +29,10 @@ import std::ascii
 public type uint is (int x) where x >= 0
 
 // ====================================================
-// File 
+// File I/O
 // ====================================================
 
-public type File is  {
+public type File is {
     // Read all bytes of this file in one go.
     method read_all() -> byte[],
 
@@ -61,10 +61,10 @@ public type File is  {
     method available() -> uint
 }
 
-public final int READONLY = 0
-public final int READWRITE = 1
+public final rwMode READONLY = 0
+public final rwMode READWRITE = 1
 
-public type rwMode is (int x) where (x == READONLY) || (x == READWRITE)
+public type rwMode is (int x) where (x == 0) || (x == 1)
 
 // Create a file object for reading / writing
 public native method open(ascii::string fileName, rwMode mode) -> File

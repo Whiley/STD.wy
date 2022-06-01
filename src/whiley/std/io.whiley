@@ -28,7 +28,7 @@ package std
 import std::ascii
 
 // TO BE DEPRECATED
-import uint from std::integer
+import uint from std::int
 
 // =================================================================
 // Print functions

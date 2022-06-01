@@ -25,9 +25,9 @@
 
 package std
 
-import std::integer
+import std::int
 import std::array
-import u8,uint from std::integer
+import u8,uint from std::int
 
 // The ASCII standard (INCITS 4-1986[R2012]) defines a 7bit character
 // encoding.
@@ -172,7 +172,7 @@ public function to_bytes(string s) -> byte[]:
 public function from_bytes(byte[] data) -> string:
     string r = [0; |data|]
     for i in 0..|data| where |r| == |data|:
-        u8 v = integer::to_uint(data[i])
+        u8 v = std::int::to_uint(data[i])
         if v >= 127:
             v = '?'
         r[i] = (char) v

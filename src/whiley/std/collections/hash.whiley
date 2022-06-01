@@ -24,7 +24,7 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package std::collections
 
-import u32 from std::integer
+import u32 from std::int
 
 // The general type of a hash function.
 public type fn<T> is function(T)->(u32)

@@ -24,7 +24,7 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package std
 
-import uint from std::integer
+import uint from std::int
 
 // ===================================================================
 // Properties

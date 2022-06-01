@@ -24,7 +24,7 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package std::collections
 
-import u32, uint from std::integer
+import u32, uint from std::int
 import string from std::ascii
 import std::option with Option
 import std::collections::pair with Pair
