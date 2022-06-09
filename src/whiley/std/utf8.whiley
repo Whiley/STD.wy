@@ -42,7 +42,7 @@ public property is_start_three(byte data) -> (bool r):
 // Identifies whether a given byte is the start of a four-byte code
 // point.  That is, whether or not it conforms to the FOUR_BYTE_MASK.
 public property is_start_four(byte data) -> (bool r):
-    return (data & THREE_BYTE_MASK) == data
+    return (data & FOUR_BYTE_MASK) == data
 
 // Identifies whether a given byte is the start of a code byte
 // containing *at least* n bytes.
